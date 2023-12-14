@@ -9,12 +9,17 @@ const routes: Array<RouteRecordRaw> = [
     component: Login
   },
   {
+    path: '/',
+    name: '登录',
+    component: Login
+  },
+  {
     path: '/home',
     name: '首页',
     component: Home,
     meta: {
       requiresAuth: true,
-      title: '客服后台 - 首页'
+      title: '后台 - 首页'
     },
   },
 ]
@@ -23,7 +28,7 @@ const router = createRouter({ history: createWebHashHistory(), routes })
 
 router.beforeEach((to, from, next) => {
   // console.log(to.meta.requiresAuth, isAuthenticated())
-  window.document.title = to.meta.title === undefined ? '客服后台' : to.meta.title as string
+  window.document.title = to.meta.title === undefined ? '后台' : to.meta.title as string
   if (to.meta.requiresAuth && !isAuthenticated()) { // 如果需要验证登录，并且没有登录，则跳转到登录页
     next("/login");
   } else {

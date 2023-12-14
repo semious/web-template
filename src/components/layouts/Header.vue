@@ -2,7 +2,7 @@
   <div>
     <div class="flex_between align-center">
       <div class="flex flex-center">
-        <h2 class="mr-6">客服后台</h2> 
+        <h2 class="mr-6">后台</h2> 
         <!-- <el-tag v-if="role === 'admin'" :type="env === '测试环境' ? 'success' : 'danger'">{{ env }}</el-tag> -->
       </div>
       <div class="user-info">

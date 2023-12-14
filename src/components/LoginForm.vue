@@ -1,21 +1,21 @@
 <template>
   <!-- 登录 -->
-  <el-form :model="loginUser" :rules="rules" ref="formRef" label-width="100px" class="login-form sign-in-form">
-    <el-form-item label="用户" prop="name">
-      <el-input v-model="loginUser.name" placeholder="Enter Username..." />
-    </el-form-item>
-    <el-form-item label="密码" prop="password">
-      <el-input v-model="loginUser.password" type="password" placeholder="Enter Password..." />
-    </el-form-item>
+  <a-form :model="loginUser" :rules="rules" ref="formRef" label-width="100px" class="login-form sign-in-form">
+    <a-form-item label="用户" field="name" :validate-trigger="['blur']">
+      <a-input v-model="loginUser.name" placeholder="Enter Username..." />
+    </a-form-item>
+    <a-form-item label="密码" field="password" :validate-trigger="['blur']">
+      <a-input v-model="loginUser.password" type="password" placeholder="Enter Password..." />
+    </a-form-item>
 
-    <el-form-item>
-      <el-button @click="handlelogin(formRef)" type="primary" class="submit-btn">提交</el-button>
-    </el-form-item>
+    <a-form-item>
+      <a-button @click="handlelogin()" type="primary" class="submit-btn">提交</a-button>
+    </a-form-item>
     <!-- 找回密码 -->
-    <el-form-item>
+    <a-form-item>
       <!--    <p class="tiparea">忘记密码<a>立即找回</a></p>  -->
-    </el-form-item>
-  </el-form>
+    </a-form-item>
+  </a-form>
 </template>
   
 <script lang="ts">
@@ -25,7 +25,7 @@ import { useRouter } from 'vue-router'
 import { loginUser, rules } from '@/components/loginValidators'
 import { FormInstance, Message } from '@arco-design/web-vue';
 import { login } from '@/api/login'
-const formRef = ref<FormInstance>()
+const formRef = ref()
 export default {
   name: 'LoginForm',
   props: {
@@ -42,10 +42,11 @@ export default {
     // 触发登录方法
     const router = useRouter()
 
-    const handlelogin = (formEl: FormInstance | undefined) => {
-      if (!formEl) return;
-      formEl.validate((valid: boolean) => {
-        if (valid) {
+    const handlelogin = () => {
+      if (!formRef) return;
+      formRef.value.validate((error: boolean) => {
+        console.log('error :>> ', error);
+        if (!error) {
           login(loginUser)
             .then((res: any) => {
               console.log('login', res);
@@ -54,14 +55,12 @@ export default {
                 window.sessionStorage.setItem('userRole', res.data.role)
                 window.sessionStorage.setItem('usernames', loginUser.name)
                 window.sessionStorage.setItem('token', res.data.token)
-                window.sessionStorage.setItem('env', loginUser.env);
-                window.localStorage.setItem('env', loginUser.env);
 
                 setTimeout(() => {
                   sessionStorage.clear();
                 }, 60 * 60 * 1000);
                 // 登录成功
-                router.push('/admin/query')
+                router.push('/home')
               }
               else {
                 Message.error({
@@ -81,7 +80,7 @@ export default {
             })
           // console.log('submit!')
         } else {
-          console.log('error submit!')
+          // console.log('error submit!')
           return false
         }
       })
@@ -91,26 +90,8 @@ export default {
 }
 </script>
 <style scoped>
-/* register */
-.login-form,
-.register-form {
-  background-color: #fff;
-  padding: 50px 80px 20px 20px;
-  border-radius: 5px;
-  box-shadow: 0px 5px 10px #cccc;
-}
 
 .submit-btn {
   width: 100%;
-}
-.tiparea {
-  text-align: right;
-  font-size: 12px;
-  color: #333;
-  width: 100%;
-}
-
-.tiparea a {
-  color: #409eff;
 }
 </style>

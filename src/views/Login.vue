@@ -11,8 +11,8 @@
     <div class="panels-container">
       <div class="panel left-panel">
         <div class="content">
-          <h3>客服后台</h3>
-          <p>罗马数列客服后台</p>
+          <h3>制衣后台</h3>
+          <p>后台</p>
           <!-- <button @click="signUpMode = !signUpMode" class="btn transparent">
             注册
           </button> -->
@@ -21,8 +21,8 @@
       </div>
       <div class="panel right-panel">
         <div class="content">
-          <h3>客服后台</h3>
-          <p>罗马数列客服后台</p>
+          <h3>后台</h3>
+          <p>后台</p>
           <button @click="signUpMode = !signUpMode" class="btn transparent">
             登录
           </button>
@@ -37,13 +37,11 @@
 import { ref, reactive } from 'vue';
 import { loginUser, rules } from '@/components/loginValidators'
 import LoginForm from '@/components/LoginForm.vue'
-import RegisterForm from '@/components/RegisterForm.vue'
 
 export default {
   name: 'LoginRegister',
   components: {
     LoginForm,
-    RegisterForm
   },
   names: 'registerForm',
   setup() {
@@ -77,40 +75,9 @@ export default {
   width: 44%;
   transition: 1s 0.7s ease-in-out;
   display: grid;
-  grid-template-columns: 1fr;
   z-index: 5;
 }
 
-/* 左右切换动画 */
-.social-text {
-  padding: 0.7rem 0;
-  font-size: 1rem;
-}
-
-.social-media {
-  display: flex;
-  justify-content: center;
-}
-
-.social-icon {
-  height: 46px;
-  width: 46px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: 0 0.45rem;
-  color: #333;
-  border-radius: 50%;
-  border: 1px solid #333;
-  text-decoration: none;
-  font-size: 1.1rem;
-  transition: 0.3s;
-}
-
-.social-icon:hover {
-  color: #4481eb;
-  border-color: #4481eb;
-}
 
 .btn {
   width: 150px;
@@ -388,39 +355,6 @@ form {
   padding: 0rem 5rem;
   transition: all 0.2s 0.7s;
   overflow: hidden;
-}
-
-form.sign-in-form {
-  z-index: 2;
-}
-
-form.sign-up-form {
-  opacity: 0;
-  z-index: 1;
-}
-
-/* register */
-.login-form,
-.register-form {
-  background-color: #fff;
-  padding: 50px 80px 20px 20px;
-  border-radius: 5px;
-  box-shadow: 0px 5px 10px #cccc;
-}
-
-.submit-btn {
-  width: 100%;
-}
-
-.tiparea {
-  text-align: right;
-  font-size: 12px;
-  color: #333;
-  width: 100%;
-}
-
-.tiparea a {
-  color: #409eff;
 }
 </style>
   
