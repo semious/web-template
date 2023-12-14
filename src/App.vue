@@ -3,16 +3,12 @@
 </template>
 
 <script lang="ts">
-// import { checkEnv } from "@/api/env";
 export default {
   name: "App",
   setup() {
     setTimeout(() => {
       sessionStorage.clear();
     }, 60 * 60 * 1000);
-    // setInterval(() => {
-    //   checkEnv();
-    // }, 60 * 1000);
   }
 };
 

@@ -5,9 +5,6 @@
       <div class="signin-signup">
         <!-- 登录 -->
         <LoginForm :loginUser='loginUser' :rules='rules'></LoginForm>
-        <!-- 注册 -->
-        <RegisterForm :registerUser='registerUser' :registerRules='registerRules'></RegisterForm>
-
       </div>
     </div>
     <!-- 左右切换动画 -->
@@ -38,8 +35,7 @@
   
 <script lang="ts">
 import { ref, reactive } from 'vue';
-import { loginUser, rules } from '@/utils/loginValidators'
-import { registerRules, registerUser } from '@/utils/registerValidator'
+import { loginUser, rules } from '@/components/loginValidators'
 import LoginForm from '@/components/LoginForm.vue'
 import RegisterForm from '@/components/RegisterForm.vue'
 
@@ -51,9 +47,8 @@ export default {
   },
   names: 'registerForm',
   setup() {
-    // 登录/注册模式
     const signUpMode = ref(false)
-    return { signUpMode, loginUser, rules, registerRules, registerUser }
+    return { signUpMode, loginUser, rules }
   }
 }
 </script>

@@ -7,12 +7,6 @@
     <el-form-item label="密码" prop="password">
       <el-input v-model="loginUser.password" type="password" placeholder="Enter Password..." />
     </el-form-item>
-    <!-- <el-form-item>
-      <el-radio-group v-model="loginUser.env">
-        <el-radio label="test">测试环境</el-radio>
-        <el-radio label="prod">正式环境</el-radio>
-      </el-radio-group>
-    </el-form-item> -->
 
     <el-form-item>
       <el-button @click="handlelogin(formRef)" type="primary" class="submit-btn">提交</el-button>
@@ -25,15 +19,12 @@
 </template>
   
 <script lang="ts">
-import { getCurrentInstance } from 'vue'
 import { ref } from 'vue';
 import { reactive } from 'vue';
 import { useRouter } from 'vue-router'
-import { loginUser, rules } from '@/utils/loginValidators'
-import { Message } from '@arco-design/web-vue';
-import { ElMessageBox } from 'element-plus'
+import { loginUser, rules } from '@/components/loginValidators'
+import { FormInstance, Message } from '@arco-design/web-vue';
 import { login } from '@/api/login'
-import type { FormInstance } from 'element-plus'
 const formRef = ref<FormInstance>()
 export default {
   name: 'LoginForm',
@@ -48,15 +39,8 @@ export default {
     }
   },
   setup(_props: any) {
-    // 通过解构getCurrentInstance，获取this，这里的this就是ctx
-    // @ts-ignore
-    const { ctx } = getCurrentInstance()
     // 触发登录方法
     const router = useRouter()
-    const signUpMode = ref(false)
-
-    /// const now = new Date().getTime()
-    /// const expireTime = now + 3 * 60 * 1000
 
     const handlelogin = (formEl: FormInstance | undefined) => {
       if (!formEl) return;
@@ -80,12 +64,8 @@ export default {
                 router.push('/admin/query')
               }
               else {
-                ElMessageBox({
-                  title: '提示',
-                  message: '用户名或密码错误',
-                  type: 'warning',
-                  confirmButtonText: '确定',
-                  cancelButtonText: '取消',
+                Message.error({
+                  content: '用户名或密码错误',
                 })
                 loginUser.name = '';
                 loginUser.password = '';

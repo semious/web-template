@@ -1,4 +1,4 @@
-import { User } from '@/utils/loginValidators'
+import { User } from '@/components/loginValidators'
 import { request } from '@/utils/request'
 
 export function login(data: User) {

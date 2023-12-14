@@ -16,7 +16,6 @@
     "baseUrl": ".",
     "allowJs": true,
     "types": [
-      "element-plus",
       "@types/node",
       "vite/client",
     ],

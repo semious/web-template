@@ -1,5 +1,5 @@
 {
-  "name": "ai-fortune-admin",
+  "name": "ai-clothing-web",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,8 @@
     "preview": "vite preview",
     "upload": "ts-node scripts/upload.ts",
     "build": "NODE_ENV=production vite build && npm run upload",
-    "deploy:web": "pm2 serve dist 18080 --name ai-fortune-admin-web --watch",
-    "deploy:restart": "pm2 restart ai-fortune-admin-web"
+    "deploy:web": "pm2 serve dist 18080 --name ai-clothing-web --watch",
+    "deploy:restart": "pm2 restart ai-clothing-web"
   },
   "dependencies": {
     "@arco-design/web-vue": "^2.45.1",
@@ -18,14 +18,12 @@
     "bootstrap-vue": "^2.23.1",
     "crypto-js": "^4.1.1",
     "dotenv": "^16.3.1",
-    "element-plus": "^2.3.3",
     "fastify-file-upload": "^4.0.0",
     "file-saver": "^2.0.5",
+    "moment": "^2.29.4",
     "vue": "^3.2.13",
     "vue-router": "^4.2.4",
-    "vuex": "^4.0.0",
-    "winston": "^3.11.0",
-    "winston-daily-rotate-file": "^4.7.1"
+    "vuex": "^4.0.0"
   },
   "devDependencies": {
     "@types/crypto-js": "^4.1.2",

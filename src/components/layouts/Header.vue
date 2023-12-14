@@ -16,7 +16,6 @@
 
 <script lang="ts">
 import { logout as logoutService } from "@/api/login";
-import { ElMessageBox } from 'element-plus';
 import { useStore } from "vuex";
 import { ref } from 'vue';
 import { useRouter } from 'vue-router'
@@ -39,27 +38,11 @@ export default {
           console.error(error);
         });
     }
-    function switchCurrentEnv() {
-      const currentEnv = window.sessionStorage.getItem('env');
-      const newEnv = currentEnv === 'prod' ? 'test' : 'prod';
-      window.sessionStorage.setItem('env', newEnv);
-      window.localStorage.setItem('env', newEnv);
-      ElMessageBox({
-        title: '环境切换成功',
-        message: `已切换到${newEnv === 'test' ? '测试' : '生产'}环境,点击后,会刷新页面,请稍后`,
-        type: 'success',
-        callback: () => {
-          router.go(0);
-        }
-      })
-    }
-
     const role = window.sessionStorage.getItem('userRole')
 
     return {
       users,
       logout,
-      switchCurrentEnv,
       env,
       role,
     };

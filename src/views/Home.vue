@@ -1,7 +1,7 @@
 <template>
   <Layout>
     <template #content>
-      <h2>欢迎来到罗马数列运营后台</h2>
+      <h2>欢迎</h2>
     </template>
   </Layout>
 </template>
