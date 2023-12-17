@@ -1,9 +1,10 @@
 <template>
-  <a-layout>
+  <a-layout class="container">
     <a-layout-header>
-      
+      <h3>Template</h3>
     </a-layout-header>
     <a-layout-content>
+
       <!-- <a-table :pagination="false" :columns="columns" :data="data" :stripe="true">
       </a-table>
       <a-pagination :pageSize="50" :current="curPage" :style='{ "justify-content": "flex-end" }' :total="total" /> -->
@@ -24,10 +25,11 @@ export default {
   setup() {
     const router = useRouter();
     const route = router.currentRoute;
-    const searchInput = ref<string>("");
-    const total = ref<number>(1);
-    const curPage = ref<number>(1);
-    const currentUser = ref<any>({});
+    const uploadRef = ref();
+    const files = ref([]);
+
+    const imageList = ref([]);
+    const imageList2 = ref([]);
 
     watch(() => router.currentRoute.value, () => {
       // console.log('router.currentRoute.value.query', router.currentRoute.value.query);
@@ -49,9 +51,16 @@ export default {
     onUpdated(() => {
     });
 
-    function onSearch() {
+    // const submit = (e: any) => {
+    //   console.log('submit');
+    //   e.stopPropagation();
+    //   uploadRef.value.submit();
+    // };
 
-    }
+    // const onChange = (fileList: any) => {
+    //   console.log('fileList :>> ', fileList);
+    //   files.value = fileList;
+    // };
 
     // function goToUsers() {
     //   window.sessionStorage.removeItem('currentUser');
@@ -83,15 +92,16 @@ export default {
     return {
       columns,
       data,
-      searchInput,
-      onSearch,
-      total,
-      curPage,
-      currentUser,
+      // customRequest,
+      // submit,
+      // onChange,
     };
   },
 };
 </script>
     
 <style scoped>
+.container {
+  margin: 16px;
+}
 </style>
