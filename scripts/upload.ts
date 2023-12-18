@@ -33,7 +33,7 @@ export async function upload(filePath: string) {
     default:
   }
   const data = fs.readFileSync(filePath);
-  const uploadPath = 'public/fortune-admin/' +filePath.replace(distPath + '/', '');
+  const uploadPath = 'public/clothing/' +filePath.replace(distPath + '/', '');
   // console.log('uploadPath :>> ', uploadPath);
   // return;
   const auth = sign("PUT", publicKey, privateKey, "", contentType, "", bucketName, `${uploadPath}`)
