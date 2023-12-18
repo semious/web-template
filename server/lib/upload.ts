@@ -5,9 +5,13 @@ import path from 'path';
 import { nanoid } from 'nanoid';
 import { resize } from './image';
 
-const publicKey = "TOKEN_4884d5af-bc71-4fd2-99b8-20b59a653cbe";
-const privateKey = "2f7b40d1-7279-4c26-a675-4b71f5b22d3b";
-const bucketName = "sdimg";
+// const publicKey = "TOKEN_4884d5af-bc71-4fd2-99b8-20b59a653cbe";
+// const privateKey = "2f7b40d1-7279-4c26-a675-4b71f5b22d3b";
+// const bucketName = "sdimg";
+
+const publicKey = "TOKEN_cb15e1f9-ddc5-4fc9-93e4-017008ffc43c";
+const privateKey = "2ce90fc4-a093-4f3a-be0c-c03650fbe08e"
+const bucketName = "xianxin"
 
 export async function upload(data: Buffer, contentType: string) {
   if (contentType.includes('image')) {
@@ -15,11 +19,11 @@ export async function upload(data: Buffer, contentType: string) {
   }
 
   const token = nanoid();
-  const uploadPath = `public/fortune-admin/img/${token}`;
+  const uploadPath = `public/files/${token}`;
   // console.log('uploadPath :>> ', uploadPath);
   // return;
   const auth = sign("PUT", publicKey, privateKey, "", contentType, "", bucketName, `${uploadPath}`)
-  const cdnUrl = `https://static.yuanzixx.cn/${uploadPath}`;
+  const cdnUrl = uploadPath;
   console.log('cdnUrl :>> ', cdnUrl);
   await axios.request({
     url: `https://${bucketName}.cn-wlcb.ufileos.com/${uploadPath}`,

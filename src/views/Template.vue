@@ -4,6 +4,10 @@
       <h3>Template</h3>
     </a-layout-header>
     <a-layout-content>
+      <a-space direction="vertical">
+        <div>模板代码: views/Template.vue</div>
+        <div>框架地址: <a target="_blank" href="https://arco.design/vue/docs/start">https://arco.design/vue</a></div>
+      </a-space>
 
       <!-- <a-table :pagination="false" :columns="columns" :data="data" :stripe="true">
       </a-table>
@@ -25,11 +29,6 @@ export default {
   setup() {
     const router = useRouter();
     const route = router.currentRoute;
-    const uploadRef = ref();
-    const files = ref([]);
-
-    const imageList = ref([]);
-    const imageList2 = ref([]);
 
     watch(() => router.currentRoute.value, () => {
       // console.log('router.currentRoute.value.query', router.currentRoute.value.query);
@@ -92,9 +91,6 @@ export default {
     return {
       columns,
       data,
-      // customRequest,
-      // submit,
-      // onChange,
     };
   },
 };

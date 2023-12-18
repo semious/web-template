@@ -7,43 +7,45 @@
       <a-space direction="vertical" :size="16" style="display: block;">
         <h4>1. 上传文件</h4>
         <a-space direction="horizontal">
-          <!-- PSB和CAD文件 <a-input disabled /> <a-button type="primary" @click="">上传</a-button> -->
-          <a-upload action="http://clothing.yuanzixx.cn/clothes/demo/layer" :auto-upload="false" ref="uploadRef"
-            @change="onChange" multiple>
+          <a-upload action="http://clothing.yuanzixx.cn/clothes/demo/layer" name="srcPsd" :auto-upload="true"
+            @success="onUploadPSBSuccess">
             <template #upload-button>
-              <a-button type="primary">上传PSB和CAD文件</a-button>
-              <a-button type="primary" @click="submit"> start upload</a-button>
+              <a-button type="primary">上传 PSB</a-button>
             </template>
           </a-upload>
         </a-space>
       </a-space>
       <a-space class="mt-2" direction="vertical" :size="16" style="display: block;">
-        <h4>2. 执行PSB图层分解</h4>
-        <a-space direction="horizontal">
-          <a-button type="primary" @click="">执行分解</a-button>
-        </a-space>
-      </a-space>
-      <a-space class="mt-2" direction="vertical" :size="16" style="display: block;">
-        <h4>3. 分解后的图层效果</h4>
-        <a-space direction="horizontal">
-          <a-button type="primary" @click="">下载所有图层</a-button>
+        <h4>2. 分解后的图层效果</h4>
+        <a-space direction="vertical">
+          <a-button type="primary" :disabled="imageList.length == 0"
+            @click="() => { downloadAll(imageList) }">下载所有图层</a-button>
+          <a-image-preview-group v-if="imageList.length > 0" :src-list="imageList"></a-image-preview-group>
+          <a-empty v-else />
           <!-- <a-table></a-table> -->
         </a-space>
       </a-space>
       <a-space class="mt-2" direction="vertical" :size="16" style="display: block;">
-        <h4>4. 执行优化</h4>
+        <h4>3. 执行优化</h4>
         <a-space direction="horizontal">
-          <a-button type="primary" @click="">执行分解</a-button>
+          <a-upload action="http://clothing.yuanzixx.cn/clothes/demo/layer" name="dstCad" :auto-upload="true"
+            @success="onUploadPSBSuccess" :on-before-upload="(file) => { loading = true; return true; }">
+            <template #upload-button>
+              <a-button :disabled="!cad || !psb" type="primary">上传目标 CAD 图</a-button>
+            </template>
+          </a-upload>
+          <!-- <a-button type="primary" :disabled="!cad || !psb" @click="">执行分解</a-button> -->
         </a-space>
       </a-space>
       <a-space class="mt-2" direction="vertical" :size="16" style="display: block;">
-        <h4>5. 优化后图层</h4>
-        <a-space direction="horizontal">
-          <a-button type="primary" @click="">下载</a-button>
-          <!-- <a-table></a-table> -->
+        <h4>4. 优化后图层</h4>
+        <a-space direction="vertical">
+          <a-button type="primary" :disabled="imageListFinal.length == 0"
+            @click="() => { downloadAll(imageListFinal) }">下载所有图层</a-button>
+          <a-image-preview-group v-if="imageListFinal.length > 0" :src-list="imageListFinal"></a-image-preview-group>
+          <a-empty v-else />
         </a-space>
       </a-space>
-
       <!-- <a-table :pagination="false" :columns="columns" :data="data" :stripe="true">
       </a-table>
       <a-pagination :pageSize="50" :current="curPage" :style='{ "justify-content": "flex-end" }' :total="total" /> -->
@@ -56,6 +58,7 @@ import { ref, onMounted, computed, reactive, watch, onUpdated } from "vue";
 import { Message } from '@arco-design/web-vue';
 import { useRouter } from 'vue-router';
 import { request } from '@/utils/request'
+import axios from "axios";
 
 export default {
   name: "App",
@@ -66,19 +69,31 @@ export default {
     const route = router.currentRoute;
     const uploadRef = ref();
     const files = ref([]);
+    const psb = ref("");
+    const cad = ref("");
+    const imageList = ref([]);
+    const imageListFinal = ref([]);
+    const layers = ref([]);
+    const data = ref({});
+    const loading = ref(false);
 
-    watch(() => router.currentRoute.value, () => {
+    watch(() => (layers.value, cad.value), () => {
+      data.value = {
+        layerVO: {
+          layers: layers.value,
+          srcCad: cad.value,
+        },
+      }
       // console.log('router.currentRoute.value.query', router.currentRoute.value.query);
     }, { immediate: true });
 
-    const columns = [
-      {
-        title: 'test',
-        dataIndex: 'test',
-        width: 80,
-      },
-    ];
-    const data = ref([]);
+    // const columns = [
+    //   {
+    //     title: 'test',
+    //     dataIndex: 'test',
+    //     width: 80,
+    //   },
+    // ];
 
     onMounted(() => {
 
@@ -123,18 +138,39 @@ export default {
         }
       }
     };
+    
+    const onBeforeUpload = (file: any) => {
 
-    const submit = (e: any) => {
-      console.log('uploadRef :>> ', uploadRef);
-      console.log('submit');
-      e.stopPropagation();
-      uploadRef.value.submit();
+      return true;
+    }
+
+    const onUploadPSBSuccess = (fileItem: any) => {
+      console.log('fileItem :>> ', fileItem);
     };
 
-    const onChange = (fileList: any) => {
-      console.log('fileList :>> ', fileList);
-      files.value = fileList;
-    };
+    // const onScale
+
+    function downloadAll(list: any) {
+      list.forEach((item: any) => {
+        downloadImage(item);
+      });
+    }
+
+    function downloadImage(imageUrl: string) {
+      console.log('url :>> ', imageUrl);
+      axios({
+        url: imageUrl,
+        method: 'GET',
+        responseType: 'blob', // important
+      }).then((response) => {
+        let blob = new Blob([response.data], { type: 'image/png' });
+        let link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        const filename = imageUrl.split('/').pop();
+        link.download = filename || 'image.png';
+        link.click();
+      });
+    }
 
     // function goToUsers() {
     //   window.sessionStorage.removeItem('currentUser');
@@ -164,11 +200,16 @@ export default {
     }
 
     return {
-      columns,
+      // columns,
       data,
-      customRequest,
-      submit,
-      onChange,
+      onUploadPSBSuccess,
+      imageList,
+      imageListFinal,
+      psb,
+      cad,
+      downloadAll,
+      loading,
+      onBeforeUpload,
     };
   },
 };

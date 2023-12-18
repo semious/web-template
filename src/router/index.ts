@@ -1,6 +1,5 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue'
-import Login from '../views/Login.vue'
 import Demo from '../views/Template.vue'
 import Clothing from '../views/Clothing.vue'
 
