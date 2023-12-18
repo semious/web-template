@@ -1,7 +1,6 @@
 import { FastifyInstance } from "fastify";
 import fileUpload from 'fastify-file-upload';
 import { upload } from "../../../lib/upload";
-import { recordLog } from "../../../lib/log";
 
 export default async function (fastify: FastifyInstance) {
   fastify.register(fileUpload)
@@ -17,7 +16,6 @@ export default async function (fastify: FastifyInstance) {
         mimetype: files[key].mimetype,
         url,
       })
-      recordLog(req.headers.name as string, 'upload file', files[key].mimetype, url)
     }
     reply.send(fileArr)
   });
