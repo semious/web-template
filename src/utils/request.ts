@@ -2,13 +2,16 @@ import axios from 'axios'
 import store from '@/store'
 import { API_BASE_URL } from '@/api/constants';
 
-
+console.log("API_BASE_URL",API_BASE_URL)
 // create an axios instance
 const axios_request = axios.create({
   // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
+  baseURL: "http://clothing.yuanzixx.cn",
   timeout: 5000 // request timeout
 })
+
+axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
 
 // request interceptor
 axios_request.interceptors.request.use(
@@ -19,7 +22,11 @@ axios_request.interceptors.request.use(
     if (env) {
       config.headers['env'] = env;
     }
-    console.log('token :>> ', token);
+    console.log("config :>>", config)
+    if(config.url && config.url.indexOf("clothes/demo/scale") >= 0) {
+      config.headers['Content-Type'] = 'multipart/form-data'
+    }
+    // console.log('token :>> ', token);
     config.headers['token'] = token;
     config.data && console.log('post :>> ', config.data);
     config.params && console.log('query :>> ', config.params);
@@ -51,9 +58,9 @@ axios_request.interceptors.response.use(
 
 export function request(data: any) {
   return new Promise(resolve => {
-    if (data.url && data.url.indexOf('http') === -1) {
-      data.url = API_BASE_URL + data.url;
-    }
+    // if (data.url && data.url.indexOf('http') === -1) {
+    //   data.url = API_BASE_URL + data.url;
+    // }
     console.log('data :>> ', data);
     resolve(axios_request.request(data));
   })
