@@ -5,9 +5,8 @@ import { API_BASE_URL } from '@/api/constants';
 console.log("API_BASE_URL",API_BASE_URL)
 // create an axios instance
 const axios_request = axios.create({
-  // baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
+  baseURL: import.meta.env.VITE_API_BASE_URL, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  baseURL: "http://clothing.yuanzixx.cn",
   timeout: 5000 // request timeout
 })
 
@@ -58,9 +57,9 @@ axios_request.interceptors.response.use(
 
 export function request(data: any) {
   return new Promise(resolve => {
-    // if (data.url && data.url.indexOf('http') === -1) {
-    //   data.url = API_BASE_URL + data.url;
-    // }
+    if (data.url && data.url.indexOf('http') === -1) {
+      data.url = API_BASE_URL + data.url;
+    }
     console.log('data :>> ', data);
     resolve(axios_request.request(data));
   })
