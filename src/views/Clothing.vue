@@ -153,7 +153,7 @@ export default {
     //     srcCad: testData.srcCad,
     //     dstCad: fileItem.file
     //   }
-    let subLayers = layers.value.slice(0,5)
+    let subLayers = layers.value.slice(0,2)
 
       let params = {
         layers: subLayers,
