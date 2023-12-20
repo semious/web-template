@@ -25,7 +25,7 @@
         <a-image-preview-group infinite v-if="imageList.length > 0">
           <a-space style="display:flex;flex-wrap:wrap;width:100%;">
             <div v-for="(item,idx) in imageList" :key="idx">
-              <a-image  v-if="idx<30" :src="item" width="200"  :preview-props="{
+              <a-image  v-if="idx<30" :src="item" width="200" style="border: 1px solid #ccc;"  :preview-props="{
                 actionsLayout: ['rotateRight', 'zoomIn', 'zoomOut'],
               }"/>
             </div>
@@ -60,7 +60,7 @@
             <a-image-preview-group infinite v-if="imageListFinal.length > 0">
           <a-space style="display:flex;flex-wrap:wrap;width:100%;">
             <div v-for="(item,idx) in imageListFinal" :key="idx">
-              <a-image  v-if="idx<30" :src="item" width="200"  :preview-props="{
+              <a-image  v-if="idx<30" :src="item" width="200" style="border: 1px solid #ccc;" :preview-props="{
                 actionsLayout: ['rotateRight', 'zoomIn', 'zoomOut'],
               }"/>
             </div>
@@ -142,9 +142,9 @@ export default {
     //      "layers":[
     //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/02.png",
     //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/03.png",
-    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/04.png",
-    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/05.png",
-    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/06.png",
+    //         // "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/04.png",
+    //         // "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/05.png",
+    //         // "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/06.png",
     //     ],
     //     "srcCad":"app/clothes/49510/S/1/layer/25_cad.jpg"
     // }
