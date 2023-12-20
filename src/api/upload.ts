@@ -7,3 +7,13 @@ export function postCad(params: any) {
     data: params
   })
 }
+
+
+///clothes/demo/query
+export function postDemoQuery(params: any) {
+  return request({
+    url: '/clothes/demo/query',
+    method: 'post',
+    data: params
+  })
+}

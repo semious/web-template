@@ -7,7 +7,8 @@ console.log("API_BASE_URL",API_BASE_URL)
 const axios_request = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL, // url = base url + request url
   // withCredentials: true, // send cookies when cross-domain requests
-  timeout: 3 * 60 * 1000 // request timeout
+  // timeout: 3 * 60 * 1000 // request timeout
+  timeout: 5000
 })
 
 axios.defaults.headers['Content-Type'] = 'application/json;charset=utf-8'
