@@ -76,14 +76,14 @@
       <!-- <a-table :pagination="false" :columns="columns" :data="data" :stripe="true">
       </a-table>
       <a-pagination :pageSize="50" :current="curPage" :style='{ "justify-content": "flex-end" }' :total="total" /> -->
+      <!-- <a-spin :loading="loadingSpin" :tip="tip"/> -->
     </a-layout-content>
-    <!-- <a-spin :loading="loading" tip="上传中">
-  </a-spin> -->
+  
   </a-layout>
 </template>
 
 <script lang="ts">
-  import { ref, onMounted, computed, reactive, watch, onUpdated } from "vue";
+  import { ref, onMounted, computed, reactive, watch, onUpdated,onUnmounted } from "vue";
   import { Message } from '@arco-design/web-vue';
   import { useRouter } from 'vue-router';
   import { request } from '@/utils/request'
@@ -114,7 +114,10 @@
       const num = ref(0);
       const dir = ref("");
       const queryInter = ref(null);
-
+      const count = ref(0)
+      const tip = ref("图片生成中")
+      const loadingSpin = ref(false)
+      console.log("loadingSpin",loadingSpin)
       watch(() => (layers.value, cad.value), () => {
         data.value = {
           layerVO: {
@@ -139,6 +142,13 @@
 
       onUpdated(() => {
       });
+
+      onUnmounted(() => {
+        if(queryInter.value) {
+          clearInterval(queryInter.value);
+        }
+        
+      })
 
       const customRequest = (option: any) => {
         const { fileItem } = option
@@ -177,8 +187,14 @@
             loading.value = false;
             // console.log("imageListFinal",imageListFinal)
             queryInter.value = setInterval(() => {
+              // count.value = count.value + 1;
+              // if(count.value > 20) {
+              //   console.log("clear")
+              //   queryInter.value && clearInterval(queryInter.value);
+              //   return;
+              // }
               postQuery()
-            }, 1000)
+            }, 1 * 60 * 1000)
           } else {
             loading.value = false;
           }
@@ -191,6 +207,12 @@
       // dir.value = "app/clothes/49510/L/1/layer";
       // num.value = 4;
       // queryInter.value = setInterval(() => {
+      //   count.value = count.value + 1;
+      //   if(count.value > 5) {
+      //     console.log("clear")
+      //     queryInter.value && clearInterval(queryInter.value);
+      //     return;
+      //   }
       //   postQuery()
       // }, 3000)
 
@@ -202,7 +224,8 @@
         postDemoQuery(params).then((res: any) => {
           console.log("postDemoQuery", res)
           if (res && res.data && res.data.length > 0) {
-            clearInterval(queryInter)
+            imageListFinal.value = res.data;
+            queryInter.value && clearInterval(queryInter.value);
           }
         }).catch(() => {
         })
@@ -311,7 +334,9 @@
         visibleCad,
         customRequest,
         visibleModel,
-        onUploadCadError
+        onUploadCadError,
+        tip,
+        loadingSpin
       };
     },
   };
