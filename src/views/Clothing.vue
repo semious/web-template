@@ -24,10 +24,14 @@
             @click="() => { visible = true }">预览所有图层</a-button> -->
           <a-image-preview-group infinite v-if="imageList.length > 0">
             <a-space style="display:flex;flex-wrap:wrap;width:100%;">
-              <div v-for="(item,idx) in imageList" :key="idx">
-                <a-image v-if="idx<30" :src="item" width="200" style="border: 1px solid #ccc;" :preview-props="{
+              <div class="img-item" v-for="(item,idx) in imageList" :key="idx">
+                <a-image v-if="idx<30" :src="imageThumbList[idx].imgSrc" width="200" style="border: 1px solid #ccc;" :preview-props="{
                 actionsLayout: ['rotateRight', 'zoomIn', 'zoomOut'],
-              }" />
+                src: item + '?iopcmd=thumbnail&type=1&scale=10'
+              }" @mouseover="imageThumbList[idx].showPopup = true" @mouseleave="imageThumbList[idx].showPopup = false"/>
+              <div class="img-popup" v-if="imageThumbList[idx].showPopup">
+                <a-image  :src="item" width="280" style="border: 1px solid #ccc;" />
+              </div>
               </div>
             </a-space>
           </a-image-preview-group>
@@ -60,10 +64,11 @@
             @click="() => { visibleCad = true }">预览所有图层</a-button> -->
           <a-image-preview-group infinite v-if="imageListFinal.length > 0">
             <a-space style="display:flex;flex-wrap:wrap;width:100%;">
-              <div v-for="(item,idx) in imageListFinal" :key="idx">
+              <div class="img-item" v-for="(item,idx) in imageListFinal" :key="idx">
                 <a-image v-if="idx<30" :src="item" width="200" style="border: 1px solid #ccc;" :preview-props="{
                 actionsLayout: ['rotateRight', 'zoomIn', 'zoomOut'],
               }" />
+                <!-- <div class="img-popup"></div> -->
               </div>
             </a-space>
           </a-image-preview-group>
@@ -102,6 +107,7 @@
       const psb = ref(false);
       const cad = ref("");
       const imageList = ref([]);
+      const imageThumbList = ref([]);
       const imageListFinal = ref([]);
       const layers = ref([]);
       const data = ref({
@@ -135,6 +141,83 @@
       //     width: 80,
       //   },
       // ];
+      
+        
+       
+      const thumbImg = (imgList:any) => {
+        for(let i = 0,j=imgList.value.length;i<j;i++) {
+          let item:any = imgList.value[i];
+          let imgFirst = item.substring(0,item.lastIndexOf("/")+1);
+          let imgSecond = item.substring(item.lastIndexOf("/")+1,item.length);
+          let imgSplit = imgSecond.split(".");
+          let imgName = imgSplit[0];
+          let imgType = imgSplit[1];
+          let thumbImg = imgFirst + imgName + "_thumb." + imgType;
+          let thumbItem = {
+            imgSrc: thumbImg,
+            showPopup: false
+          }
+           // console.log("imgSecond",imgSecond,"imgFirst",imgFirst,"imgName",imgName,"imgType",imgType)
+          imageThumbList.value.push(thumbItem)
+         
+        }
+        console.log("imageThumbList",imageThumbList,"imageList",imageList)
+      }
+
+    //   imageList.value = [
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/02_L_104.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/03_L_240.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/04_L_4.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/05_L_279.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/06_L_238.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/07_L_62.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/08_L_71.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/09_L_271.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/10_L_272.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/11_L_263.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/12_L_519.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/13_L_2.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/14_L_1146.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/15_L_1144.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/16_L_1145.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/17_L_6.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/18_L_33.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/19_L_253.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/20_L_116.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/21_L_31.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/22_L_1254.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/23_L_1253.png",
+    //         "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/S/1/layer/24_L_1462.png"
+    //     ]
+    //     thumbImg(imageList)
+
+    //   imageListFinal.value = [
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/02_L_104.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/03_L_240.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/04_L_4.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/05_L_279.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/06_L_238.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/07_L_62.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/08_L_71.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/09_L_271.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/10_L_272.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/11_L_263.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/12_L_519.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/13_L_2.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/14_L_1146.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/15_L_1144.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/16_L_1145.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/17_L_6.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/18_L_33.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/19_L_253.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/20_L_116.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/21_L_31.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/22_L_1254.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/23_L_1253.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/24_L_1462.png",
+    //     "https://xianxin.cn-gd.ufileos.com/app/clothes/49510/L/1/layer/微信图片_20231218174142.png"
+    // ]
+
 
       onMounted(() => {
 
@@ -245,6 +328,7 @@
           srcCad.value = res.data.srcCad;
           console.log("imageList", imageList)
           psb.value = true;
+          thumbImg(imageList)
         }
         // let res = fileItem
       };
@@ -336,14 +420,27 @@
         visibleModel,
         onUploadCadError,
         tip,
-        loadingSpin
+        loadingSpin,
+        imageThumbList
       };
     },
   };
 </script>
 
-<style scoped>
+<style lang="less" scoped>
   .container {
     margin: 16px;
+    .img-item {
+      position: relative;
+      .img-popup {
+        position: absolute;
+        left: 200px;
+        top: 0;
+        width: 300px;
+        height: 300px;
+        background: #fff;
+        z-index: 99;
+      }
+    }
   }
 </style>
