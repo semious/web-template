@@ -1,21 +1,9 @@
-import { createStore } from 'vuex'
+import { createPinia } from 'pinia';
+import useAppStore from './modules/app';
+import useUserStore from './modules/user';
+import useTabBarStore from './modules/tab-bar';
 
-export default createStore({
-  state() {
-    return {
-      env: window.sessionStorage.getItem('env') || 'test',
-    }
-  },
-  getters: {
-  },
-  mutations: {
-    changeEnv(state: any, env: string) {
-      state.env = env
-      window.sessionStorage.setItem('env', env)
-    }
-  },
-  actions: {
-  },
-  modules: {
-  }
-})
+const pinia = createPinia();
+
+export { useAppStore, useUserStore, useTabBarStore };
+export default pinia;

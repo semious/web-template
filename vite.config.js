@@ -18,10 +18,13 @@ export default defineConfig({
       less: {
         modifyVars: {
           "arcoblue-6": "#f85959",
+          hack: `true; @import (reference) "${path.resolve(
+            'src/assets/style/breakpoint.less'
+          )}";`,
         },
         javascriptEnabled: true,
       },
-    },
+    }
   },
   base:
     process.env.NODE_ENV === "production"
