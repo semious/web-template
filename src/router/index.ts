@@ -2,14 +2,9 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue'
 import Demo from '../views/Template.vue'
 import Clothing from '../views/Clothing.vue'
-import NProgress from 'nprogress'; // progress bar
-import 'nprogress/nprogress.css';
 
-import { appRoutes } from './routes';
-import { REDIRECT_MAIN, NOT_FOUND_ROUTE } from './routes/base';
-import createRouteGuard from './guard';
+const DEFAULT_LAYOUT = () => import('@/layout/index.vue');
 
-NProgress.configure({ showSpinner: false }); // NProgress Configuration
 
 const routes: Array<RouteRecordRaw> = [
   // {
@@ -34,9 +29,23 @@ const routes: Array<RouteRecordRaw> = [
     name: 'Clothing',
     component: Clothing,
   },
-  ...appRoutes,
-  REDIRECT_MAIN,
-  NOT_FOUND_ROUTE,
+  {
+    path: '/',
+    name: '',
+    component: DEFAULT_LAYOUT,
+    meta: {
+    },
+    children: [
+      {
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/user/index.vue'),
+        meta: {
+          name: "用户管理"
+        },
+      },
+    ],
+  }
 ]
 
 const router = createRouter({ history: createWebHashHistory(), routes })

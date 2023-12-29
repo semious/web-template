@@ -1,8 +1,8 @@
 <template>
-  <a-layout class="layout" :class="{ mobile: appStore.hideMenu }">
-    <div v-if="navbar" class="layout-navbar">
+  <a-layout class="layout" >
+    <!-- <div v-if="navbar" class="layout-navbar">
       <NavBar />
-    </div>
+    </div> -->
     <a-layout>
       <a-layout>
         <a-layout-sider
@@ -13,7 +13,7 @@
           :collapsed="collapsed"
           :collapsible="true"
           :width="menuWidth"
-          :style="{ paddingTop: navbar ? '60px' : '' }"
+         
           :hide-trigger="true"
           @collapse="setCollapsed"
         >
@@ -33,11 +33,11 @@
           <Menu />
         </a-drawer>
         <a-layout class="layout-content" :style="paddingStyle">
-          <TabBar v-if="appStore.tabBar" />
+          <!-- <TabBar v-if="appStore.tabBar" /> -->
           <a-layout-content>
             <PageLayout />
           </a-layout-content>
-          <Footer v-if="footer" />
+          <!-- <Footer v-if="footer" /> -->
         </a-layout>
       </a-layout>
     </a-layout>
@@ -47,22 +47,21 @@
 <script lang="ts" setup>
   import { ref, computed, watch, provide, onMounted } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
-  import { useAppStore, useUserStore } from '@/store';
-  import NavBar from '@/components/navbar/index.vue';
+  // import { useAppStore, useUserStore } from '@/store';
+  // import NavBar from '@/components/navbar/index.vue';
   import Menu from '@/components/menu/index.vue';
-  import Footer from '@/components/footer/index.vue';
-  import TabBar from '@/components/tab-bar/index.vue';
+  // import Footer from '@/components/footer/index.vue';
+  // import TabBar from '@/components/tab-bar/index.vue';
   import usePermission from '@/hooks/permission';
-  import useResponsive from '@/hooks/responsive';
   import PageLayout from './page-layout.vue';
 
   const isInit = ref(false);
-  const appStore = useAppStore();
-  const userStore = useUserStore();
+  // const appStore = useAppStore();
+  // const userStore = useUserStore();
   const router = useRouter();
   const route = useRoute();
   const permission = usePermission();
-  useResponsive(true);
+
   const navbarHeight = `60px`;
   const navbar = computed(() => appStore.navbar);
   const renderMenu = computed(() => appStore.menu && !appStore.topMenu);
