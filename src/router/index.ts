@@ -45,6 +45,23 @@ const routes: Array<RouteRecordRaw> = [
         },
       },
     ],
+  },
+  {
+    path: '',
+    name: '',
+    component: DEFAULT_LAYOUT,
+    meta: {
+    },
+    children: [
+      {
+        path: 'style',
+        name: 'Style',
+        component: () => import('@/views/style/index.vue'),
+        meta: {
+          name: "款式管理"
+        },
+      },
+    ],
   }
 ]
 

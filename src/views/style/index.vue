@@ -1,7 +1,7 @@
 <template>
     <a-layout class="container">
         <a-space>
-            <a-input class="search-input" placeholder="请输入手机号/姓名进行查询" allow-clear>
+            <a-input class="search-input" placeholder="请输入款式ID进行筛选" allow-clear>
             </a-input>
             <a-button type="primary">查询</a-button>
             <a-button type="outline" style="margin-left: 26px;">查询全部</a-button>
@@ -9,10 +9,16 @@
         <a-space style="margin-top:30px;">
             <div class="text">筛选</div>
             <a-radio-group v-model="tagValue" type="button">
+                <a-radio value="lastWeek">最近一周更新</a-radio>
+                <a-radio value="lastMonth">最近一月新增</a-radio>
                 <a-radio value="all">全部</a-radio>
-                <a-radio value="designer">设计师</a-radio>
-                <a-radio value="maker">纸样师</a-radio>
-                <a-radio value="admin">管理员</a-radio>
+            </a-radio-group>
+        </a-space>
+        <a-space style="margin-top:20px;">
+            <a-radio-group v-model="tagStatus" type="button">
+                <a-radio value="done">已完成</a-radio>
+                <a-radio value="making">生成中</a-radio>
+                <a-radio value="all">全部</a-radio>
             </a-radio-group>
         </a-space>
         <a-space style="margin-top: 27px;">
@@ -20,12 +26,11 @@
                 <template #icon>
                     <icon-plus />
                 </template>
-                新增员工
+                新增款式
             </a-button>
         </a-space>
-        <a-table style="margin-top: 24px;width: 1050px;" filter-icon-align-left :columns="columns" :data="data">
+        <a-table style="margin-top: 24px;width: 1200px;" filter-icon-align-left :columns="columns" :data="data">
             <template #optional="{ record }">
-                <a-button type="text" size="small" @click="disabledEnabled">禁用</a-button>
                 <a-button type="text" size="small" @click="deleteUser">删除</a-button>
                 <a-button type="text" size="small" @click="updateUser">修改</a-button>
             </template>
@@ -78,51 +83,53 @@
     import { ref, onMounted, computed, reactive, watch, onUpdated, onUnmounted } from "vue";
     import clipboardJS from "clipboard";
     const columns = [{
-        title: '姓名',
+        title: '款式ID',
+        dataIndex: 'styleId',
+        width: 125
+    },
+    {
+        title: '名称',
         dataIndex: 'name',
-        width: 200
+        width: 130
     },
     {
-        title: '角色',
-        dataIndex: 'role',
-        width: 200
+        title: '客户',
+        dataIndex: 'custom',
+        width: 100
     },
     {
-        title: '手机号码',
-        dataIndex: 'phone',
-        width: 200
-    },
-    {
+        title: '新增时间',
+        dataIndex: 'createTime',
+        width: 170,
+    }, {
+        title: '纸样师',
+        dataIndex: 'patternMaker',
+        width: 120
+    }, {
+        title: '设计师',
+        dataIndex: 'design',
+        width: 120
+    }, {
+        title: '效果图',
+        dataIndex: 'pic',
+        width: 80
+    }, {
         title: '状态',
         dataIndex: 'status',
-        width: 80,
-        filterable: {
-            filters: [{
-                text: '正常',
-                value: '正常',
-            }, {
-                text: '停用',
-                value: '停用',
-            }],
-            filter: (value, record) => record.salary > value,
-            multiple: true
-        }
+        width: 80
     }, {
         title: '备注',
         dataIndex: 'remark',
-        width: 120
+        width: 100
     }, {
         title: '操作',
         slotName: 'optional',
-        width: 240,
+        width: 160,
         align: 'center'
     }]
+    const tagStatus = ref("");
     const data = [{
-        name: "张三",
-        role: "管理员",
-        phone: "123",
-        status: "正常",
-        remark: "",
+       
     }]
     const form = reactive({
         name: '',
@@ -131,7 +138,7 @@
         password: '',
         remark: ''
     })
-    const tagValue = ref("all");
+    const tagValue = ref("");
 
     const visible = ref(false);
 

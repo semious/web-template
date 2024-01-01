@@ -1,8 +1,8 @@
 <template>
   <a-layout class="layout" >
-    <!-- <div v-if="navbar" class="layout-navbar">
+    <div v-if="navbar" class="layout-navbar">
       <NavBar />
-    </div> -->
+    </div>
     <a-layout>
       <a-layout>
         <a-layout-sider
@@ -33,7 +33,6 @@
           <Menu />
         </a-drawer>
         <a-layout class="layout-content" :style="paddingStyle">
-          <!-- <TabBar v-if="appStore.tabBar" /> -->
           <a-layout-content>
             <PageLayout />
           </a-layout-content>
@@ -48,7 +47,7 @@
   import { ref, computed, watch, provide, onMounted } from 'vue';
   import { useRouter, useRoute } from 'vue-router';
   // import { useAppStore, useUserStore } from '@/store';
-  // import NavBar from '@/components/navbar/index.vue';
+  import NavBar from '@/components/navbar/index.vue';
   import Menu from '@/components/menu/index.vue';
   // import Footer from '@/components/footer/index.vue';
   // import TabBar from '@/components/tab-bar/index.vue';

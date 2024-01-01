@@ -1,47 +1,44 @@
 <template>
-    <div class="menu-demo">
+    <a-layout class="layout">
+        <div class="layout-navbar">
+            <NavBar />
+          </div>
         <a-layout>
-            <a-menu :style="{ width: '200px', height: '100%' }" :default-open-keys="['0']"
-                :default-selected-keys="['0_2']" show-collapse-button breakpoint="xl" @collapse="onCollapse">
-                <a-sub-menu key="0">
-                    <template #icon><icon-apps></icon-apps></template>
-                    <template #title>Navigation 1</template>
-                    <a-menu-item key="0_0">Menu 1</a-menu-item>
-                    <a-menu-item key="0_1">Menu 2</a-menu-item>
-                    <a-menu-item key="0_2">Menu 3</a-menu-item>
-                    <a-menu-item key="0_3">Menu 4</a-menu-item>
-                </a-sub-menu>
-                <a-sub-menu key="1">
-                    <template #icon><icon-bug></icon-bug></template>
-                    <template #title>Navigation 2</template>
-                    <a-menu-item key="1_0">Menu 1</a-menu-item>
-                    <a-menu-item key="1_1">Menu 2</a-menu-item>
-                    <a-menu-item key="1_2">Menu 3</a-menu-item>
-                </a-sub-menu>
-                <a-sub-menu key="2">
-                    <template #icon><icon-bulb></icon-bulb></template>
-                    <template #title>Navigation 3</template>
-                    <a-menu-item key="2_0">Menu 1</a-menu-item>
-                    <a-menu-item key="2_1">Menu 2</a-menu-item>
-                    <a-sub-menu key="2_2" title="Navigation 4">
-                        <a-menu-item key="2_2_0">Menu 1</a-menu-item>
-                        <a-menu-item key="2_2_1">Menu 2</a-menu-item>
-                    </a-sub-menu>
-                </a-sub-menu>
-            </a-menu>
-            <a-layout class="layout-content" >
-                <a-layout-content>
-                  <PageLayout />
-                </a-layout-content>
-              </a-layout>
+            <a-layout>
+                <a-layout>
+                    <a-layout-sider class="layout-sider" :width="menuWidth">
+                        <div class="app-info"><img
+                            width="28" src="@/assets/images/logo.png"
+                          /><span v-if="!collapsed">成衣制作</span></div>
+                        <a-menu :default-open-keys="['0']" :default-selected-keys="['0_2']" show-collapse-button
+                            breakpoint="xl" @collapse="onCollapse" :collapsed="collapsed">
+                            <a-menu-item  :key="item.key" v-for="(item,idx) in menuList" @click="goPath(item)">
+                                <template #icon>
+                                    <img :src="item.pathIcon">
+                                </template>
+                                {{item.name}}
+                            </a-menu-item>
+                        </a-menu>
+                    </a-layout-sider>
+                </a-layout>
+
+                <a-layout class="layout-content"  :style="paddingStyle">
+                    <a-layout-content>
+                        <PageLayout />
+                    </a-layout-content>
+                </a-layout>
+            </a-layout>
+
         </a-layout>
 
-    </div>
+    </a-layout>
 </template>
-<script>
-    import { ref } from 'vue';
+<script lang="ts" setup>
+    import { ref,computed,watch  } from 'vue';
+    import { useRouter, useRoute } from 'vue-router';
     import { Message } from '@arco-design/web-vue';
     import PageLayout from './page-layout.vue';
+    import NavBar from '@/components/navbar/index.vue';
     import {
         IconMenuFold,
         IconMenuUnfold,
@@ -49,35 +46,138 @@
         IconBug,
         IconBulb,
     } from '@arco-design/web-vue/es/icon';
+    const router = useRouter();
+    const route = useRoute();
+    const menuList = ref([]);
+    menuList.value = [{
+        key: 0,
+        name: "用户管理",
+        pathName: "User",
+        pathIcon: new URL("@/assets/images/pathIcon/icon_user.png",import.meta.url).href
+    },{
+        key: 0,
+        name: "款式管理",
+        pathName: "Style",
+        pathIcon: new URL("@/assets/images/pathIcon/icon_style.png",import.meta.url).href
+    },{
+        key: 0,
+        name: "标准码上传",
+        pathName: "User",
+        pathIcon: new URL("@/assets/images/pathIcon/general_book.png",import.meta.url).href
+    },{
+        key: 0,
+        name: "CAD图上传",
+        pathName: "User",
+        pathIcon: new URL("@/assets/images/pathIcon/icon_cad.png",import.meta.url).href
+    },{
+        key: 0,
+        name: "图层解析",
+        pathName: "User",
+        pathIcon: new URL("@/assets/images/pathIcon/icon_tuceng.png",import.meta.url).href
+    },{
+        key: 0,
+        name: "智能生成",
+        pathName: "User",
+        pathIcon: new URL("@/assets/images/pathIcon/ai_create.png",import.meta.url).href
+    },{
+        key: 0,
+        name: "示例",
+        pathName: "Clothing",
+        pathIcon: new URL("@/assets/images/pathIcon/ai_create.png",import.meta.url).href
+    }]
+    const navbarHeight = `75px`;
+    const collapsed = ref(false);
+    const menuWidth = computed(() => {
+        console.log("collapsed",collapsed)
+        return collapsed.value ? 48 : 144;
+    });
+    const paddingStyle = computed(() => {
+        const paddingLeft = { paddingLeft: `${menuWidth.value}px` };
+        const paddingTop ={ paddingTop: navbarHeight }
+        return { ...paddingLeft, ...paddingTop };
+    });
+    const onCollapse = (val, type) => {
+        console.log("val", val)
+        collapsed.value = val;
+    }
 
-    export default {
-        components: {
-            IconMenuFold,
-            IconMenuUnfold,
-            IconApps,
-            IconBug,
-            IconBulb,
-            PageLayout
-        },
-        setup() {
-            return {
-                onCollapse(val, type) {
-                    const content = type === 'responsive' ? '触发响应式收缩' : '点击触发收缩';
-                    Message.info({
-                        content,
-                        duration: 2000,
-                    });
-                }
-            };
-        }
-    };
+    const goPath = (item) => {
+        router.push({ name: item.pathName });
+    }
+
 </script>
-<style scoped>
-    .menu-demo {
-        box-sizing: border-box;
+<style lang="less" scoped>
+    @nav-size-height: 70px;
+    @layout-max-width: 1100px;
+
+    .layout {
         width: 100%;
-        height: 600px;
-        padding: 40px;
-        background-color: var(--color-neutral-2);
+        height: 100%;
+    }
+
+    .layout-navbar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 100;
+        width: 100%;
+        height: @nav-size-height;
+    }
+
+    .layout-sider {
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 999;
+        height: 100%;
+        transition: all 0.2s cubic-bezier(0.34, 0.69, 0.1, 1);
+        box-shadow: none;
+        .app-info {
+            padding: 24px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            span {
+                font-size: 16px;
+                font-weight: 500;
+                color: #1D2129;
+                margin-left: 2px;
+            }
+        }
+        :deep(.arco-menu) {
+            height:100%;
+            .arco-menu-inner {
+                padding-top: 45px;
+                .arco-menu-icon {
+                    img {
+                        width: 14px;
+                    }
+                }
+            }
+        }
+        /* &::after {
+            position: absolute;
+            top: 0;
+            right: -1px;
+            display: block;
+            width: 1px;
+            height: 100%;
+            background-color: var(--color-border);
+            content: '';
+        } */
+
+        > :deep(.arco-layout-sider-children) {
+            overflow-y: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    .layout-content {
+        min-height: 100vh;
+        overflow-y: hidden;
+        background-color: #F7F8FA;
+        transition: padding 0.2s cubic-bezier(0.34, 0.69, 0.1, 1);
     }
 </style>
