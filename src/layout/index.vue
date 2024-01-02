@@ -103,7 +103,7 @@
       }
     );
 
-    console.log("route",route.name,"currentIdx",currentIdx.value)
+    console.log("route",route,"currentIdx",currentIdx.value)
     const menuWidth = computed(() => {
         console.log("collapsed",collapsed)
         return collapsed.value ? 48 : 144;

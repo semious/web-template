@@ -88,7 +88,9 @@
         setLoading(true);
         try {
         //   await userStore.login(values as LoginData);
+          
           const { redirect, ...othersQuery } = router.currentRoute.value.query;
+          window.sessionStorage.setItem('userInfo',"True");
           router.push({
             name: (redirect as string) || 'User',
             query: {

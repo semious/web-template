@@ -14,7 +14,22 @@ const routes: Array<RouteRecordRaw> = [
   // },
   {
     path: '/',
-    redirect: 'login',
+    name: "",
+    redirect: "User",
+    meta: {
+      requiresAuth: true,
+    },
+    component: DEFAULT_LAYOUT,
+    children: [
+      {
+        path: 'user',
+        name: 'User',
+        component: () => import('@/views/user/index.vue'),
+        meta: {
+          name: "用户管理"
+        },
+      },
+    ],
   },
   {
     path: '/login',
@@ -25,7 +40,7 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/',
+    path: '',
     name: '',
     // component: Clothing,
     component: DEFAULT_LAYOUT,
@@ -41,10 +56,11 @@ const routes: Array<RouteRecordRaw> = [
     ],
   },
   {
-    path: '/',
+    path: '',
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
+      requiresAuth: true,
     },
     children: [
       {
@@ -62,6 +78,7 @@ const routes: Array<RouteRecordRaw> = [
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
+      requiresAuth: true,
     },
     children: [
       {
@@ -79,6 +96,7 @@ const routes: Array<RouteRecordRaw> = [
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
+      requiresAuth: true,
     },
     children: [
       {
@@ -96,6 +114,7 @@ const routes: Array<RouteRecordRaw> = [
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
+      requiresAuth: true,
     },
     children: [
       {
@@ -113,6 +132,7 @@ const routes: Array<RouteRecordRaw> = [
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
+      requiresAuth: true,
     },
     children: [
       {
@@ -130,6 +150,7 @@ const routes: Array<RouteRecordRaw> = [
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
+      requiresAuth: true,
     },
     children: [
       {
@@ -147,8 +168,9 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({ history: createWebHashHistory(), routes })
 
 router.beforeEach((to, from, next) => {
-  // console.log(to.meta.requiresAuth, isAuthenticated())
+  console.log(to.meta.requiresAuth, isAuthenticated())
   window.document.title = to.meta.title === undefined ? '后台' : to.meta.title as string
+  console.log("to",to)
   if (to.meta.requiresAuth && !isAuthenticated()) { // 如果需要验证登录，并且没有登录，则跳转到登录页
     next("/login");
   } else {

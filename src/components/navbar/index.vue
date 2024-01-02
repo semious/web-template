@@ -3,39 +3,14 @@
       <ul class="right-side">
         <li>
           <a-dropdown trigger="click">
-            <a-avatar
+            <a-space class="user-name"><a-avatar
               :size="40"
               :style="{ marginRight: '8px', cursor: 'pointer' }"
             >
               <img alt="avatar" :src="avatar" />
-              
-            </a-avatar>
-            <span class="user-name">张三峰</span>
+              张三峰
+            </a-avatar>张三峰</a-space>
             <template #content>
-              <a-doption>
-                <a-space @click="switchRoles">
-                  <icon-tag />
-                  <span>
-                    切换角色
-                  </span>
-                </a-space>
-              </a-doption>
-              <a-doption>
-                <a-space @click="$router.push({ name: 'Info' })">
-                  <icon-user />
-                  <span>
-                    用户中心
-                  </span>
-                </a-space>
-              </a-doption>
-              <a-doption>
-                <a-space @click="$router.push({ name: 'Setting' })">
-                  <icon-settings />
-                  <span>
-                    用户设置
-                  </span>
-                </a-space>
-              </a-doption>
               <a-doption>
                 <a-space @click="handleLogout">
                   <icon-export />
@@ -54,6 +29,9 @@
   <script lang="ts" setup>
     import { computed, ref, inject } from 'vue';
     import { Message } from '@arco-design/web-vue';
+    import { useRouter } from 'vue-router';
+
+    const router = useRouter();
     // import { useDark, useToggle, useFullscreen } from '@vueuse/core';
     // import useUser from '@/hooks/user';
     // const { logout } = useUser();
@@ -93,9 +71,11 @@
     //   });
     //   refBtn.value.dispatchEvent(event);
     // };
-    // const handleLogout = () => {
-    //   logout();
-    // };
+    const handleLogout = () => {
+      // logout();
+      window.localStorage.setItem("userInfo","");
+      router.push("Login")
+    };
     // const setDropDownVisible = () => {
     //   const event = new MouseEvent('click', {
     //     view: window,
@@ -144,6 +124,7 @@
         font-size: 14px;
         font-weight: 400;
         color: #1D2129;
+        cursor: pointer;
       }
 
       li {

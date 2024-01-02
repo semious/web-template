@@ -82,19 +82,25 @@
     </a-space>
     <a-space style="margin-top: 20px;">
       <a-space>
-        <a-button type="text" size="small">全选</a-button>
-        <a-button type="text" size="small">反选</a-button>
-        <a-button type="text" size="small">清空选择</a-button>
+        <a-button type="text" size="small"
+          @click="checkAll">全选</a-button>
+        <a-button type="text" size="small"
+          @click="checkInvert">反选</a-button>
+        <a-button type="text" size="small"
+          @click="clearAll">清空选择</a-button>
       </a-space>
     </a-space>
     <a-space class="img-box">
-        <div class="img-item" v-for="i in 10" :key="i">
-          <a-image width="118" height="70"
-            src="https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp" />
-          <div class="img-desc">A user’s avatar</div>
-        </div>
+      <div class="img-item" v-for="(item,i) in layerList"
+        :key="i" @click="checkItem(i)">
+        <i class="check-i" v-if="hasCheck(i)"> <icon-check
+            class="check" /></i>
+        <a-image width="118" height="70" :src="item.imgSrc"
+          :preview="false" />
+        <div class="img-desc">{{item.name}}</div>
+      </div>
 
-      </a-space>
+    </a-space>
     <a-modal v-model:visible="visible" @ok="handleOk"
       @cancel="handleCancel">
       <template #title>
@@ -335,6 +341,100 @@ const modifyName = (record) => {
 const inputBlur = () => {
   showInput.value = false;
 };
+
+const checkList = ref([]);
+const layerList = ref([]);
+layerList.value = [
+  {
+    imgSrc:
+      "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp",
+    name: "测试1",
+  },
+  {
+    imgSrc:
+      "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp",
+    name: "测试2",
+  },
+  {
+    imgSrc:
+      "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp",
+    name: "测试3",
+  },
+  {
+    imgSrc:
+      "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp",
+    name: "测试4",
+  },
+  {
+    imgSrc:
+      "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp",
+    name: "测试5",
+  },
+  {
+    imgSrc:
+      "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp",
+    name: "测试6",
+  },
+  {
+    imgSrc:
+      "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp",
+    name: "测试7",
+  },
+  {
+    imgSrc:
+      "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp",
+    name: "测试8",
+  },
+  {
+    imgSrc:
+      "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp",
+    name: "测试9",
+  },
+  {
+    imgSrc:
+      "https://p1-arco.byteimg.com/tos-cn-i-uwbnlip3yd/a8c8cdb109cb051163646151a4a5083b.png~tplv-uwbnlip3yd-webp.webp",
+    name: "测试10",
+  },
+];
+
+const checkAll = () => {
+  checkList.value = [];
+  for (let i = 0, j = layerList.value.length; i < j; i++) {
+    checkList.value.push(i);
+  }
+};
+
+const checkIdx = (i) => {
+  if (checkList.value.indexOf(i) >= 0) {
+    let idx = checkList.value.indexOf(i);
+    checkList.value.splice(idx, 1);
+  } else {
+    checkList.value.push(i);
+  }
+};
+
+const checkInvert = () => {
+  for (let i = 0, j = layerList.value.length; i < j; i++) {
+    checkIdx(i);
+  }
+};
+
+const clearAll = () => {
+  checkList.value = [];
+};
+
+const checkItem = (i) => {
+  checkIdx(i);
+};
+const hasCheck = (i) => {
+//   console.log("checkList", checkList.value);
+  // console.log("checkList.value.indexOf(idx)",checkList.value.indexOf(idx))
+  if (checkList.value.indexOf(i) >= 0) {
+    return true;
+  } else {
+    return false;
+  }
+};
 </script>
     <style lang="less" scoped>
 .container {
@@ -394,20 +494,39 @@ const inputBlur = () => {
     display: flex;
     flex-wrap: wrap;
     .img-item {
-        width: 118px;
+      width: 118px;
+      display: flex;
+      flex-direction: column;
+      margin-right: 2px;
+      position: relative;
+      .img-desc {
+        margin-top: 7px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #1d2129;
+        line-height: 24px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      .check-i {
+        width: 14px;
+        height: 14px;
+        background: #165dff;
+        border-radius: 2px 2px 2px 2px;
+        opacity: 1;
+        top: 50px;
+        left: 8px;
+        position: absolute;
+        z-index: 9;
         display: flex;
-        flex-direction: column;
-        margin-right: 2px;
-        .img-desc {
-            margin-top: 7px;
-            font-size: 16px;
-            font-weight: 500;
-            color: #1D2129;
-            line-height: 24px;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-        }
+        justify-content: center;
+        align-items: center;
+      }
+      .check {
+        color: #fff;
+        font-size: 12px;
+      }
     }
   }
   :deep(.arco-space) {
@@ -423,7 +542,7 @@ const inputBlur = () => {
     }
 
     .arco-space-item {
-    //   margin-right: 0 !important;
+      //   margin-right: 0 !important;
     }
 
     .text {
