@@ -53,27 +53,62 @@
             </template>
             <div>
                 <a-form :model="form">
-                    <a-form-item field="name" label="姓名">
-                        <a-input v-model="form.name" placeholder="请输入姓名" />
+                    <a-form-item field="styleId" label="款式ID">
+                        <a-input v-model="form.styleId" placeholder="请输入款式ID" />
                     </a-form-item>
-                    <a-form-item field="phone" label="手机">
-                        <a-input v-model="form.phone" placeholder="请输入手机号码" />
+                    <a-form-item field="name" label="名称">
+                        <a-input v-model="form.name" placeholder="请输入名称" />
                     </a-form-item>
-                    <a-form-item field="role" label="角色">
-                        <a-radio-group v-model="form.role" type="button">
-                            <a-radio value="designer">设计师</a-radio>
-                            <a-radio value="maker">纸样师</a-radio>
-                            <a-radio value="admin">管理员</a-radio>
-                        </a-radio-group>
+                    <a-form-item field="patternMaker" label="纸样师">
+                        <a-select v-model="form.patternMaker" placeholder="请选择制样师" allow-clear>
+                            <a-option value="张三">张三</a-option>
+                            <a-option value="李四">李四</a-option>
+                            <a-option value="王五">王五</a-option>
+                        </a-select>
                     </a-form-item>
-                    <a-form-item field="password" label="密码">
-                        <a-input v-model="form.password" placeholder="请输入用户密码" />
-                        <a-button class="copy-btn" type="outline">复制</a-button>
+                    <a-form-item field="designer" label="设计师">
+                        <a-select v-model="form.designer" placeholder="请选择设计师" allow-clear>
+                            <a-option value="张三">张三</a-option>
+                            <a-option value="李四">李四</a-option>
+                            <a-option value="王五">王五</a-option>
+                        </a-select>
+                    </a-form-item>
+                    <a-form-item field="stylePic" label="效果图">
+                        <a-upload action="/" />
+                    </a-form-item>
+                    <a-form-item field="size" label="尺码">
+                        <a-checkbox-group>
+                            <a-checkbox value="XXS">XXS</a-checkbox>
+                            <a-checkbox value="XS">XS</a-checkbox>
+                            <a-checkbox value="S">S</a-checkbox>
+                            <a-checkbox value="M">M</a-checkbox>
+                            <a-checkbox value="L">L</a-checkbox>
+                            <a-checkbox value="XL">XL</a-checkbox>
+                            <a-checkbox value="XXL">XXL</a-checkbox>
+                            <a-checkbox value="XXXL">XXXL</a-checkbox>
+                        </a-checkbox-group>
+                    </a-form-item>
+                    <a-form-item field="standardCode" label="标准码">
+                        <a-select v-model="form.standardCode" placeholder="请选择标准码" allow-clear>
+                            <a-option value="S">S</a-option>
+                            <a-option value="M">M</a-option>
+                            <a-option value="L">L</a-option>
+                            <a-option value="XL">XL</a-option>
+                            <a-option value="XXL">XXL</a-option>
+                            <a-option value="XXXL">XXXL</a-option>
+                            <a-option value="XS">XS</a-option>
+                            <a-option value="XXS">XXS</a-option>
+                        </a-select>
+                    </a-form-item>
+                    <a-form-item field="sampleNumbers" label="纸样数">
+                        <a-input v-model="form.sampleNumbers" placeholder="请输入纸样数" />
                     </a-form-item>
                     <a-form-item field="remark" label="备注">
                         <a-input v-model="form.remark" placeholder="请输入备注" />
                     </a-form-item>
-
+                    <a-form-item field="custom" label="客户">
+                        <a-input v-model="form.custom" placeholder="请输入客户" />
+                    </a-form-item>
                 </a-form>
             </div>
         </a-drawer>
@@ -81,7 +116,7 @@
 </template>
 <script lang="ts" setup>
     import { ref, onMounted, computed, reactive, watch, onUpdated, onUnmounted } from "vue";
-    import clipboardJS from "clipboard";
+
     const columns = [{
         title: '款式ID',
         dataIndex: 'styleId',
@@ -132,11 +167,16 @@
        
     }]
     const form = reactive({
+        styleId: '',
         name: '',
-        phone: '',
-        role: 'designer',
-        password: '',
-        remark: ''
+        patternMaker: '',
+        designer: '',
+        stylePic: '',
+        size: '',
+        standardCode: '',
+        sampleNumbers: '',
+        remark: '',
+        custom: ''
     })
     const tagValue = ref("");
 
@@ -168,18 +208,23 @@
     const visibleAdd = ref(false);
     const userTitle = ref("");
     const addUser = () => {
-        userTitle.value = "新增用户";
+        userTitle.value = "新增款式";
+        form.styleId = "";
         form.name = ""; 
-        form.phone = "";
-        form.role = "designer";
-        form.password = "";
+        form.patternMaker = "";
+        form.designer = "";
+        form.stylePic = "";
+        form.size = "";
+        form.standardCode = "";
+        form.sampleNumbers = "";
         form.remark = "";
+        form.custom = "";
     
         console.log("form",form)
         visibleAdd.value = true;
     }
     const updateUser = () => {
-        userTitle.value = "修改用户";
+        userTitle.value = "修改款式";
         visibleAdd.value = true;
     }
     const handleAddOk = () => {
@@ -188,18 +233,6 @@
     const handleAddCancel = () => {
         visibleAdd.value = false;
     }
-    const clipboard = new clipboardJS(".copy-btn", {
-        text() {
-            return form.password
-        }
-    })
-    console.log("clipboard", clipboard)
-    clipboard.on('success', () => {
-        console.log("复制成功")
-    })
-    clipboard.on('error', () => {
-        console.log("复制失败")
-    })
 </script>
 <style lang="less" scoped>
     .container {

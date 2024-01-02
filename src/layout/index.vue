@@ -12,9 +12,10 @@
                           /><span v-if="!collapsed">成衣制作</span></div>
                         <a-menu :default-open-keys="['0']" :default-selected-keys="['0_2']" show-collapse-button
                             breakpoint="xl" @collapse="onCollapse" :collapsed="collapsed">
-                            <a-menu-item  :key="item.key" v-for="(item,idx) in menuList" @click="goPath(item)">
+                            <a-menu-item :class="[idx == currentIdx ? 'menu-selected' : '']"  :key="item.key" v-for="(item,idx) in menuList" @click="goPath(item)">
                                 <template #icon>
-                                    <img :src="item.pathIcon">
+                                    <img v-if="idx == currentIdx" :src="item.pathIconSelect">
+                                    <img v-else :src="item.pathIcon">
                                 </template>
                                 {{item.name}}
                             </a-menu-item>
@@ -39,13 +40,7 @@
     import { Message } from '@arco-design/web-vue';
     import PageLayout from './page-layout.vue';
     import NavBar from '@/components/navbar/index.vue';
-    import {
-        IconMenuFold,
-        IconMenuUnfold,
-        IconApps,
-        IconBug,
-        IconBulb,
-    } from '@arco-design/web-vue/es/icon';
+
     const router = useRouter();
     const route = useRoute();
     const menuList = ref([]);
@@ -53,40 +48,62 @@
         key: 0,
         name: "用户管理",
         pathName: "User",
-        pathIcon: new URL("@/assets/images/pathIcon/icon_user.png",import.meta.url).href
+        pathIcon: new URL("@/assets/images/pathIcon/icon_user.png",import.meta.url).href,
+        pathIconSelect: new URL("@/assets/images/pathIcon/icon_user_select.png",import.meta.url).href,
     },{
         key: 0,
         name: "款式管理",
         pathName: "Style",
-        pathIcon: new URL("@/assets/images/pathIcon/icon_style.png",import.meta.url).href
+        pathIcon: new URL("@/assets/images/pathIcon/icon_style.png",import.meta.url).href,
+        pathIconSelect: new URL("@/assets/images/pathIcon/icon_tuceng_select.png",import.meta.url).href,
     },{
         key: 0,
         name: "标准码上传",
-        pathName: "User",
-        pathIcon: new URL("@/assets/images/pathIcon/general_book.png",import.meta.url).href
+        pathName: "Standard",
+        pathIcon: new URL("@/assets/images/pathIcon/general_book.png",import.meta.url).href,
+        pathIconSelect: new URL("@/assets/images/pathIcon/general_book_select.png",import.meta.url).href,
     },{
         key: 0,
         name: "CAD图上传",
-        pathName: "User",
-        pathIcon: new URL("@/assets/images/pathIcon/icon_cad.png",import.meta.url).href
+        pathName: "Cad",
+        pathIcon: new URL("@/assets/images/pathIcon/icon_cad.png",import.meta.url).href,
+        pathIconSelect: new URL("@/assets/images/pathIcon/icon_cad_select.png",import.meta.url).href,
     },{
         key: 0,
         name: "图层解析",
-        pathName: "User",
-        pathIcon: new URL("@/assets/images/pathIcon/icon_tuceng.png",import.meta.url).href
+        pathName: "Layer",
+        pathIcon: new URL("@/assets/images/pathIcon/icon_tuceng.png",import.meta.url).href,
+        pathIconSelect: new URL("@/assets/images/pathIcon/icon_tuceng_select.png",import.meta.url).href,
     },{
         key: 0,
         name: "智能生成",
-        pathName: "User",
-        pathIcon: new URL("@/assets/images/pathIcon/ai_create.png",import.meta.url).href
+        pathName: "Create",
+        pathIcon: new URL("@/assets/images/pathIcon/ai_create.png",import.meta.url).href,
+        pathIconSelect: new URL("@/assets/images/pathIcon/ai_create_select.png",import.meta.url).href,
     },{
         key: 0,
         name: "示例",
         pathName: "Clothing",
-        pathIcon: new URL("@/assets/images/pathIcon/ai_create.png",import.meta.url).href
+        pathIcon: new URL("@/assets/images/pathIcon/ai_create.png",import.meta.url).href,
+        pathIconSelect: new URL("@/assets/images/pathIcon/ai_create_select.png",import.meta.url).href,
     }]
     const navbarHeight = `75px`;
     const collapsed = ref(false);
+    const currentIdx = ref(0);
+    
+    currentIdx.value = menuList.value.findIndex((item)=>{
+        return item.pathName == route.name;
+    })
+    watch(
+      () => route.name,
+      (val, oval) => {
+        currentIdx.value = menuList.value.findIndex((item)=>{
+            return item.pathName == route.name;
+        })
+      }
+    );
+
+    console.log("route",route.name,"currentIdx",currentIdx.value)
     const menuWidth = computed(() => {
         console.log("collapsed",collapsed)
         return collapsed.value ? 48 : 144;
@@ -172,6 +189,16 @@
             display: flex;
             flex-direction: column;
         }
+
+        .menu-selected {
+            background: transparent;
+            
+            :deep(.arco-menu-title) {
+                font-size: 14px;
+                font-weight: bolder;
+                color: #165DFF;
+            }
+        }
     }
 
     .layout-content {
@@ -179,5 +206,6 @@
         overflow-y: hidden;
         background-color: #F7F8FA;
         transition: padding 0.2s cubic-bezier(0.34, 0.69, 0.1, 1);
+        
     }
 </style>

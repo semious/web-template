@@ -25,9 +25,20 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/clothing',
-    name: 'Clothing',
-    component: Clothing,
+    path: '/',
+    name: '',
+    // component: Clothing,
+    component: DEFAULT_LAYOUT,
+    children: [
+      {
+        path: 'clothing',
+        name: 'Clothing',
+        component: () => import('@/views/Clothing.vue'),
+        meta: {
+          name: "demo管理"
+        },
+      },
+    ],
   },
   {
     path: '/',
@@ -62,7 +73,75 @@ const routes: Array<RouteRecordRaw> = [
         },
       },
     ],
-  }
+  },
+  {
+    path: '',
+    name: '',
+    component: DEFAULT_LAYOUT,
+    meta: {
+    },
+    children: [
+      {
+        path: 'standard',
+        name: 'Standard',
+        component: () => import('@/views/standard/index.vue'),
+        meta: {
+          name: "标准上传"
+        },
+      },
+    ],
+  },
+  {
+    path: '',
+    name: '',
+    component: DEFAULT_LAYOUT,
+    meta: {
+    },
+    children: [
+      {
+        path: 'cad',
+        name: 'Cad',
+        component: () => import('@/views/cad/index.vue'),
+        meta: {
+          name: "CAD图上传"
+        },
+      },
+    ],
+  },
+  {
+    path: '',
+    name: '',
+    component: DEFAULT_LAYOUT,
+    meta: {
+    },
+    children: [
+      {
+        path: 'layer',
+        name: 'Layer',
+        component: () => import('@/views/layer/index.vue'),
+        meta: {
+          name: "图层解析"
+        },
+      },
+    ],
+  },
+  {
+    path: '',
+    name: '',
+    component: DEFAULT_LAYOUT,
+    meta: {
+    },
+    children: [
+      {
+        path: 'create',
+        name: 'Create',
+        component: () => import('@/views/create/index.vue'),
+        meta: {
+          name: "智能生成"
+        },
+      },
+    ],
+  },
 ]
 
 const router = createRouter({ history: createWebHashHistory(), routes })
