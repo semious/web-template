@@ -28,6 +28,6 @@ export default defineConfig({
   },
   base:
     process.env.NODE_ENV === "production"
-      ? "https://tg.yuanzixx.cn/public/clothing"
+      ? "https://tg.yuanzixx.cn/public/clothingAdmin"
       : "/",
 });
