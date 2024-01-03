@@ -2,8 +2,8 @@
   <a-layout class="container">
     <a-space>
       <a-button type="primary">全部生成</a-button>
-      <a-button type="primary"
-        style="margin-left: 26px;">全部下载</a-button>
+      <a-button type="primary" style="margin-left: 26px;"
+        @click="downloadAll">全部下载</a-button>
     </a-space>
 
     <a-space style="margin-top: 16px;">
@@ -23,11 +23,11 @@
       </div>
     </a-space>
     <a-space>
-        <a-table style="width: 600px;margin-top: 18px;"
-          :columns="descColumns" :data="descData"
-          :pagination="false"
-          :bordered="{wrapper: true, cell: true}">
-        </a-table>
+      <a-table style="width: 600px;margin-top: 18px;"
+        :columns="descColumns" :data="descData"
+        :pagination="false"
+        :bordered="{wrapper: true, cell: true}">
+      </a-table>
     </a-space>
     <a-modal v-model:visible="visible" @ok="handleOk"
       @cancel="handleCancel">
@@ -45,7 +45,7 @@
     </a-modal>
   </a-layout>
 </template>
-      <script lang="ts" setup>
+<script lang="ts" setup>
 import {
   ref,
   onMounted,
@@ -56,6 +56,7 @@ import {
   onUnmounted,
   nextTick,
 } from "vue";
+import axios from "axios";
 
 const psbColumns = [
   {
@@ -118,52 +119,50 @@ const psbData = [
     statusTip: "未完成标准码图层解析",
   },
 ];
-const descColumns = [ {
+const descColumns = [
+  {
     title: "判断逻辑",
     dataIndex: "logicDesc",
     width: 180,
-  }, {
+  },
+  {
     title: "状态提示",
     dataIndex: "statusTip",
     width: 180,
-  }, {
+  },
+  {
     title: "单元格",
     dataIndex: "cellDesc",
     width: 200,
-  }]
-  const descData = [{
+  },
+];
+const descData = [
+  {
     logicDesc: "标准码psb解析",
     statusTip: "未完成标准码图层解析",
-    cellDesc: ""
-  },{
+    cellDesc: "",
+  },
+  {
     logicDesc: "标准码CAD框图确认",
     statusTip: "未上传目标码CAD框图",
-    cellDesc: ""
-  },{
+    cellDesc: "",
+  },
+  {
     logicDesc: "目标码CAD框图确认",
     statusTip: "OK",
-    cellDesc: "立即生成"
-  },{
+    cellDesc: "立即生成",
+  },
+  {
     logicDesc: "生成中",
     statusTip: "OK",
-    cellDesc: "进度"
-  },{
+    cellDesc: "进度",
+  },
+  {
     logicDesc: "已完成",
     statusTip: "OK",
-    cellDesc: "完成时间+下载+重新生成"
-  }]
-const form = reactive({
-  patternNumber: "",
-  name: "",
-  patternMaker: "",
-  designer: "",
-  stylePic: "",
-  size: "",
-  standardCode: "",
-  sampleNumbers: "",
-  remark: "",
-  custom: "",
-});
+    cellDesc: "完成时间+下载+重新生成",
+  },
+];
 const tagValue = ref("");
 
 const visible = ref(false);
@@ -196,18 +195,6 @@ const visibleAdd = ref(false);
 const userTitle = ref("");
 const addUser = () => {
   userTitle.value = "修改基本信息";
-  //   form.styleId = "";
-  //   form.name = "";
-  //   form.patternMaker = "";
-  //   form.designer = "";
-  //   form.stylePic = "";
-  //   form.size = "";
-  //   form.standardCode = "";
-  //   form.sampleNumbers = "";
-  //   form.remark = "";
-  //   form.custom = "";
-
-  console.log("form", form);
   visibleAdd.value = true;
 };
 const updateUser = () => {
@@ -234,8 +221,28 @@ const modifyName = (record) => {
 const inputBlur = () => {
   showInput.value = false;
 };
+const downloadImage = (imageUrl: string) => {
+  console.log("url :>> ", imageUrl);
+  axios({
+    url: imageUrl,
+    method: "GET",
+    responseType: "blob", // important
+  }).then((response) => {
+    let blob = new Blob([response.data], { type: "image/png" });
+    let link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    const filename = imageUrl.split("/").pop();
+    link.download = filename || "image.png";
+    link.click();
+  });
+};
+const downloadAll = (list: any) => {
+  list.forEach((item: any) => {
+    downloadImage(item);
+  });
+};
 </script>
-      <style lang="less" scoped>
+<style lang="less" scoped>
 .container {
   padding: 24px 0 0 46px;
   .basic-info {

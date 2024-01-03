@@ -23,7 +23,8 @@ axios_request.interceptors.request.use(
       config.headers['env'] = env;
     }
     console.log("config :>>", config)
-    if(config.url && config.url.indexOf("clothes/demo/scale") >= 0) {
+    if(config.url && (config.url.indexOf("clothes/demo/scale") >= 0 || config.url.indexOf("clothes/upload/psd") >= 0 ||
+    config.url.indexOf("clothes/upload/cad") >= 0)) {
       config.headers['Content-Type'] = 'multipart/form-data'
     }
     // console.log('token :>> ', token);

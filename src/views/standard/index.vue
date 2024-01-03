@@ -1,77 +1,47 @@
 <template>
   <a-layout class="container">
-    <a-space>
-      <a-input class="search-input" placeholder="请输入ID进行筛选"
-        allow-clear>
-      </a-input>
-      <a-button type="primary">查询</a-button>
-      <a-button type="outline"
-        style="margin-left: 26px;">查询全部</a-button>
-    </a-space>
-    <a-row class="basic-info" justify="space-between">
-      <a-col :span="3">
-        <div class="title">基本信息</div>
-      </a-col>
-      <a-col :span="18">
-        <a-descriptions :column="6">
-          <a-descriptions-item label="款式ID:">
-            49510
-          </a-descriptions-item>
-          <a-descriptions-item label="设计师:">
-            李明智
-          </a-descriptions-item>
-          <a-descriptions-item label="纸样师:">
-            李明智
-          </a-descriptions-item>
-          <a-descriptions-item label="创建时间:">
-            2023/01/09
-          </a-descriptions-item>
-          <a-descriptions-item label="更新时间:">
-            2023/01/09
-          </a-descriptions-item>
-
-        </a-descriptions>
-        <a-descriptions :column="3">
-          <a-descriptions-item label="尺码数:" >
-            6 （XS S M L XL XXL)
-          </a-descriptions-item>
-          <a-descriptions-item label="标准码:" >
-            XS
-          </a-descriptions-item>
-          <a-descriptions-item label="纸样数:">
-            10
-          </a-descriptions-item>
-        </a-descriptions>
-      </a-col>
-      <a-col :span="3">
-        <a-button type="primary" @click="addUser">
-          修改基本样式
-        </a-button>
-      </a-col>
-    </a-row>
-
+    <CodeSearch @searchKeyword="searchKeyword"></CodeSearch>
+    <BasicInfo :styleCode="styleCode" @addUser="addUser" ref="basicInfoRef"></BasicInfo>
     <a-space style="margin-top: 12px;">
-        <div class="psb-box">
-            <div class="desc">上传标准码psb文件（已上传3 待上传1）</div>
-            <a-space class="upload-info"><a-upload action="/" /><div class="upload-desc">文件命名规则为：1_s_后半裙.psb</div></a-space>
-            <a-table style="width: 392px;margin-top: 18px;" :columns="psbColumns" :data="psbData" :pagination="false">
-                <template #sizeOptional="{ record }">
-                    <div class="opration-item" @click="delSizeName(record)">
-                        {{record.sizeName}}
-                        <icon-delete/>
-                    </div>
-           
-                </template>
-                <template #nameOptional="{ record }">
-                    <div v-if="!showInput" class="opration-item" @click="modifyName(record)">
-                        {{record.patternName}}
-                        <icon-edit/>
-                    </div>
-                    <a-input v-else ref="editInputRef" :style="{width:'100px'}" placeholder="输入纸样名称" allow-clear @blur="inputBlur" @press-enter="inputBlur" />
-                </template>
-            </a-table>
-        </div>
-        <div></div>
+      <div class="psb-box">
+        <div class="desc">上传标准码psb文件（已上传3 待上传1）</div>
+        <a-space class="upload-info">
+          <a-upload :custom-request="customRequest"
+            name="psd" :auto-upload="true"
+            @success="onUploadCadSuccess"
+            @error="onUploadCadError"
+            :on-before-upload="(file) => { loading = true; return true; }">
+            <template #upload-button>
+              <a-button type="primary">上传</a-button>
+            </template>
+          </a-upload>
+          <div class="upload-desc">文件命名规则为：1_s_后半裙.psb</div>
+        </a-space>
+        <a-table style="width: 392px;margin-top: 18px;"
+          :columns="psbColumns" :data="psbData"
+          :pagination="false">
+          <template #sizeOptional="{ record }">
+            <div class="opration-item"
+              @click="delSizeName(record)">
+              {{record.sizeName}}
+              <icon-delete />
+            </div>
+
+          </template>
+          <template #nameOptional="{ record }">
+            <div v-if="!showInput" class="opration-item"
+              @click="modifyName(record)">
+              {{record.patternName}}
+              <icon-edit />
+            </div>
+            <a-input v-else ref="editInputRef"
+              :style="{width:'100px'}" placeholder="输入纸样名称"
+              allow-clear @blur="inputBlur"
+              @press-enter="inputBlur" />
+          </template>
+        </a-table>
+      </div>
+      <div></div>
     </a-space>
     <a-modal v-model:visible="visible" @ok="handleOk"
       @cancel="handleCancel">
@@ -87,81 +57,9 @@
       </template>
       <div>删除该用户后需要重新添加账号才可以登录</div>
     </a-modal>
-    <a-drawer :width="340" :visible="visibleAdd"
-      @ok="handleAddOk" @cancel="handleAddCancel"
-      unmountOnClose>
-      <template #title>
-        {{userTitle}}
-      </template>
-      <div>
-        <a-form :model="form">
-          <a-form-item field="styleId" label="款式ID">
-            <a-input v-model="form.styleId"
-              placeholder="请输入款式ID" />
-          </a-form-item>
-          <a-form-item field="name" label="名称">
-            <a-input v-model="form.name"
-              placeholder="请输入名称" />
-          </a-form-item>
-          <a-form-item field="patternMaker" label="纸样师">
-            <a-select v-model="form.patternMaker"
-              placeholder="请选择制样师" allow-clear>
-              <a-option value="张三">张三</a-option>
-              <a-option value="李四">李四</a-option>
-              <a-option value="王五">王五</a-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item field="designer" label="设计师">
-            <a-select v-model="form.designer"
-              placeholder="请选择设计师" allow-clear>
-              <a-option value="张三">张三</a-option>
-              <a-option value="李四">李四</a-option>
-              <a-option value="王五">王五</a-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item field="stylePic" label="效果图">
-            <a-upload action="/" />
-          </a-form-item>
-          <a-form-item field="size" label="尺码">
-            <a-checkbox-group>
-              <a-checkbox value="XXS">XXS</a-checkbox>
-              <a-checkbox value="XS">XS</a-checkbox>
-              <a-checkbox value="S">S</a-checkbox>
-              <a-checkbox value="M">M</a-checkbox>
-              <a-checkbox value="L">L</a-checkbox>
-              <a-checkbox value="XL">XL</a-checkbox>
-              <a-checkbox value="XXL">XXL</a-checkbox>
-              <a-checkbox value="XXXL">XXXL</a-checkbox>
-            </a-checkbox-group>
-          </a-form-item>
-          <a-form-item field="standardCode" label="标准码">
-            <a-select v-model="form.standardCode"
-              placeholder="请选择标准码" allow-clear>
-              <a-option value="S">S</a-option>
-              <a-option value="M">M</a-option>
-              <a-option value="L">L</a-option>
-              <a-option value="XL">XL</a-option>
-              <a-option value="XXL">XXL</a-option>
-              <a-option value="XXXL">XXXL</a-option>
-              <a-option value="XS">XS</a-option>
-              <a-option value="XXS">XXS</a-option>
-            </a-select>
-          </a-form-item>
-          <a-form-item field="sampleNumbers" label="纸样数">
-            <a-input v-model="form.sampleNumbers"
-              placeholder="请输入纸样数" />
-          </a-form-item>
-          <a-form-item field="remark" label="备注">
-            <a-input v-model="form.remark"
-              placeholder="请输入备注" />
-          </a-form-item>
-          <a-form-item field="custom" label="客户">
-            <a-input v-model="form.custom"
-              placeholder="请输入客户" />
-          </a-form-item>
-        </a-form>
-      </div>
-    </a-drawer>
+    <StyleAdd :userTitle="userTitle"
+      :visibleAdd="visibleAdd" @closeDrawer="closeDrawer">
+    </StyleAdd>
   </a-layout>
 </template>
 <script lang="ts" setup>
@@ -175,7 +73,10 @@ import {
   onUnmounted,
   nextTick,
 } from "vue";
-
+import { uploadPsb } from "@/api/style";
+import CodeSearch from "@/components/codeSearch/index.vue";
+import StyleAdd from "@/components/styleAdd/index.vue";
+import BasicInfo from "@/components/basicInfo/index.vue";
 const psbColumns = [
   {
     title: "纸样号",
@@ -186,33 +87,23 @@ const psbColumns = [
     title: "S",
     dataIndex: "sizeName",
     width: 180,
-    slotName: 'sizeOptional',
+    slotName: "sizeOptional",
   },
   {
     title: "纸样名",
     dataIndex: "patternName",
     width: 135,
-    slotName: 'nameOptional',
-  }
+    slotName: "nameOptional",
+  },
 ];
 const tagStatus = ref("");
-const psbData = [{
-    patternNumber:1,
+const psbData = [
+  {
+    patternNumber: 1,
     sizeName: "1_s_后半裙.psb",
-    patternName: "后半裙"
-}];
-const form = reactive({
-  patternNumber: "",
-  name: "",
-  patternMaker: "",
-  designer: "",
-  stylePic: "",
-  size: "",
-  standardCode: "",
-  sampleNumbers: "",
-  remark: "",
-  custom: "",
-});
+    patternName: "后半裙",
+  },
+];
 const tagValue = ref("");
 
 const visible = ref(false);
@@ -245,18 +136,6 @@ const visibleAdd = ref(false);
 const userTitle = ref("");
 const addUser = () => {
   userTitle.value = "修改基本信息";
-//   form.styleId = "";
-//   form.name = "";
-//   form.patternMaker = "";
-//   form.designer = "";
-//   form.stylePic = "";
-//   form.size = "";
-//   form.standardCode = "";
-//   form.sampleNumbers = "";
-//   form.remark = "";
-//   form.custom = "";
-
-  console.log("form", form);
   visibleAdd.value = true;
 };
 const updateUser = () => {
@@ -270,72 +149,99 @@ const handleAddCancel = () => {
   visibleAdd.value = false;
 };
 const delSizeName = (record) => {
-    console.log("record",record)
-    visible.value = true;
-}
+  console.log("record", record);
+  visible.value = true;
+};
 const editInputRef = ref(null);
 const modifyName = (record) => {
-    showInput.value = true;
-    nextTick(()=> {
-        editInputRef.value.focus()
-    })
-    
-}
+  showInput.value = true;
+  nextTick(() => {
+    editInputRef.value.focus();
+  });
+};
 const inputBlur = () => {
-    showInput.value = false;
-}
+  showInput.value = false;
+};
+
+
+const basicInfoRef = ref<any>();
+const styleCode = ref();
+const searchKeyword = (val: any) => {
+  styleCode.value = val;
+  basicInfoRef.value.getStyleDetailReq(styleCode.value)
+};
+
+const closeDrawer = () => {
+  visibleAdd.value = false;
+};
+
+
+const loading = ref(false);
+const customRequest = (option: any) => {
+  const { fileItem } = option;
+  console.log("fileItem :>> ", fileItem);
+
+  let params = {
+    styleId: "",
+    psd: fileItem.file,
+  };
+
+  console.log("params", params);
+  uploadPsb(params)
+    .then((res: any) => {
+      console.log("uploadPsb", res);
+      loading.value = false;
+    })
+    .catch(() => {
+      loading.value = false;
+    });
+};
+const onUploadCadSuccess = (fileItem: any) => {
+  loading.value = false;
+};
+const onUploadCadError = (fileItem: any) => {
+  loading.value = false;
+};
 </script>
 <style lang="less" scoped>
 .container {
   padding: 24px 0 0 46px;
-  .basic-info {
-    width: 1065px;
-    padding: 18px 0;
-    background: #ffffff;
-    margin-top: 30px;
-    align-items: center;
-    .title {
-      font-size: 16px;
-      font-weight: bolder;
-      color: #1d2129;
-      text-align: center;
-    }
-  }
+
   .psb-box {
     width: 524px;
     height: 335px;
-    background: #FFFFFF;
+    background: #ffffff;
     border-radius: 0px 0px 0px 0px;
     opacity: 1;
     padding: 24px;
     .desc {
-        font-size: 14px;
-        font-weight: 400;
-        color: #1D2129;
-        line-height: 22px;
+      font-size: 14px;
+      font-weight: 400;
+      color: #1d2129;
+      line-height: 22px;
     }
     .opration-item {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
     }
     .upload-info {
-        display: flex;
-        align-items: center;
-        .upload-desc {
-            font-size: 14px;
-            font-weight: 400;
-            color: #86909C;
-            margin-left: 8px;
-            line-height: 42px;
-        }
-        :deep(.arco-upload-wrapper) {
-            font-size: 14px;
-        }
+      display: flex;
+      align-items: center;
+      .upload-desc {
+        font-size: 14px;
+        font-weight: 400;
+        color: #86909c;
+        margin-left: 8px;
+        line-height: 42px;
+      }
+      :deep(.arco-upload-wrapper) {
+        font-size: 14px;
+      }
     }
     :deep(.arco-input-wrapper) {
-        padding-top: 0;
-        padding-bottom: 0;
+      padding-top: 0;
+      padding-bottom: 0;
     }
   }
   :deep(.arco-space) {
