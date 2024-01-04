@@ -41,7 +41,7 @@
        </a-descriptions>
      </a-col>
      <a-col :span="3">
-       <a-button type="primary" @click="addUser">
+       <a-button type="dashed" @click="addUser">
          修改基本样式
        </a-button>
      </a-col>
@@ -84,7 +84,7 @@ const getStyleDetailReq = (styleCode:any) => {
 };
 
 const addUser = () => {
-   emit("addUser")
+   emit("addUser",1)
 }
 const handleSize = (sizes: any) => {
  if (sizes && sizes.length > 0) {

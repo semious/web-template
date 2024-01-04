@@ -31,7 +31,7 @@
         <a-table style="margin-top: 24px;width: 1200px;" filter-icon-align-left :columns="columns" :data="data">
             <template #optional="{ record }">
                 <a-button type="text" size="small" @click="deleteUser">删除</a-button>
-                <a-button type="text" size="small" @click="updateUser">修改</a-button>
+                <a-button type="text" size="small" @click="updateUser(1)">修改</a-button>
             </template>
         </a-table>
         <a-modal v-model:visible="visible" @ok="handleOk" @cancel="handleCancel">
@@ -46,7 +46,7 @@
             </template>
             <div>是否删除该款式</div>
         </a-modal>
-        <StyleAdd :userTitle="userTitle" :visibleAdd="visibleAdd" @closeDrawer="closeDrawer"></StyleAdd>
+        <StyleAdd :userTitle="userTitle" :visibleAdd="visibleAdd" @closeDrawer="closeDrawer" :isModify="isModify"></StyleAdd>
     </a-layout>
 </template>
 <script lang="ts" setup>
@@ -142,9 +142,11 @@
         userTitle.value = "新增款式";
         visibleAdd.value = true;
     }
-    const updateUser = () => {
+    const isModify = ref(0);
+    const updateUser = (val:number) => {
         userTitle.value = "修改款式";
         visibleAdd.value = true;
+        isModify.value = val;
     }
 
     const closeDrawer = () => {

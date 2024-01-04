@@ -70,7 +70,7 @@
       <div>删除该用户后需要重新添加账号才可以登录</div>
     </a-modal>
     <StyleAdd :userTitle="userTitle"
-      :visibleAdd="visibleAdd" @closeDrawer="closeDrawer">
+      :visibleAdd="visibleAdd" @closeDrawer="closeDrawer" :isModify="isModify">
     </StyleAdd>
   </a-layout>
 </template>
@@ -175,9 +175,11 @@ const handleDeleteCancel = () => {
 
 const visibleAdd = ref(false);
 const userTitle = ref("");
-const addUser = () => {
+const isModify = ref(0);
+const addUser = (val:number) => {
   userTitle.value = "修改基本信息";
   visibleAdd.value = true;
+  isModify.value = val;
 };
 const updateUser = () => {
   userTitle.value = "修改款式";

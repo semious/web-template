@@ -1,10 +1,8 @@
 <template>
-  <!-- <div>
-    
-  </div> -->
+
   <a-drawer :width="340" :visible="visibleAdd"
     @ok="handleAddOk" @cancel="handleAddCancel"
-    unmountOnClose>
+    unmountOnClose class="add-drawer">
     <template #title>
       {{userTitle}}
     </template>
@@ -12,7 +10,8 @@
       <a-form :model="form">
         <a-form-item field="styleCode" label="款式ID">
           <a-input type="number" v-model="form.styleCode"
-            placeholder="请输入款式ID" />
+            placeholder="请输入款式ID"
+            :disabled="isModify == 1" />
         </a-form-item>
         <a-form-item field="styleName" label="名称">
           <a-input v-model="form.styleName"
@@ -38,7 +37,7 @@
           <a-upload action="/" />
         </a-form-item>
         <a-form-item field="sizes" label="尺码">
-          <a-checkbox-group v-model="form.sizes">
+          <a-checkbox-group v-model="form.sizes" :disabled="isModify == 1">
             <a-checkbox value="XXS">XXS</a-checkbox>
             <a-checkbox value="XS">XS</a-checkbox>
             <a-checkbox value="S">S</a-checkbox>
@@ -51,7 +50,7 @@
         </a-form-item>
         <a-form-item field="standardSize" label="标准码">
           <a-select v-model="form.standardSize"
-            placeholder="请选择标准码" allow-clear>
+            placeholder="请选择标准码" allow-clear :disabled="isModify == 1">
             <a-option value="S">S</a-option>
             <a-option value="M">M</a-option>
             <a-option value="L">L</a-option>
@@ -64,10 +63,11 @@
         </a-form-item>
         <a-form-item field="partNum" label="纸样数">
           <a-input type="number" v-model="form.partNum"
-            placeholder="请输入纸样数" />
+            placeholder="请输入纸样数"
+            :disabled="isModify == 1" />
         </a-form-item>
         <a-form-item field="styleRemark" label="备注">
-          <a-input  v-model="form.styleRemark"
+          <a-input v-model="form.styleRemark"
             placeholder="请输入备注" />
         </a-form-item>
         <a-form-item field="custom" label="客户">
@@ -89,10 +89,16 @@ import {
   onUnmounted,
 } from "vue";
 import { postStyleSave } from "@/api/style";
-const props = defineProps(["userTitle","visibleAdd"]);
+const props = defineProps(["userTitle", "visibleAdd", "isModify"]);
 console.log("props", props);
-const emit = defineEmits(["closeDrawer"])
+const emit = defineEmits(["closeDrawer"]);
 const id = ref();
+const isModify = ref(0);
+isModify.value = props.isModify;
+console.log("isModify", isModify);
+watch(props, () => {
+  isModify.value = props.isModify;
+});
 const form = reactive({
   styleCode: "",
   styleName: "",
@@ -105,8 +111,9 @@ const form = reactive({
   custom: "",
   effectImg: null,
 });
+
 const postStyleSaveReq = () => {
-  console.log("form",form)
+  console.log("form", form);
   let params = {
     styleEditVO: {
       styleCode: form.styleCode,
@@ -119,17 +126,39 @@ const postStyleSaveReq = () => {
       styleRemark: form.styleRemark,
       custom: form.custom,
     },
-    effectImg: form.effectImg
-  }
-  postStyleSave(params).then((res)=> {
-    console.log("postStyleSave",res)
-  })
+    effectImg: form.effectImg,
+  };
+  postStyleSave(params).then((res) => {
+    console.log("postStyleSave", res);
+  });
 };
 const handleAddOk = () => {
-  postStyleSaveReq()
-  emit("closeDrawer")
+  postStyleSaveReq();
+  emit("closeDrawer");
 };
 const handleAddCancel = () => {
-  emit("closeDrawer")
+  emit("closeDrawer");
 };
 </script>
+<style lang="less">
+.add-drawer {
+  display: flex;
+  .arco-input-wrapper {
+    background: #fff;
+
+    border: 1px solid #165dff;
+  }
+  .arco-select-view-single {
+    background: #fff;
+    border: 1px solid #165dff;
+  }
+  .arco-select-view-disabled {
+    border: 1px solid #F2F3F5;
+    background: #F2F3F5;
+  }
+  .arco-input-disabled {
+    border: 1px solid #F2F3F5;
+    background: #F2F3F5;
+  }
+}
+</style>
