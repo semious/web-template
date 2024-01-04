@@ -26,7 +26,8 @@ const routes: Array<RouteRecordRaw> = [
         name: 'User',
         component: () => import('@/views/user/index.vue'),
         meta: {
-          name: "用户管理"
+          name: "用户管理",
+          requiresAuth: true,
         },
       },
     ],
@@ -40,23 +41,27 @@ const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '',
+    path: '/',
     name: '',
     // component: Clothing,
     component: DEFAULT_LAYOUT,
+    meta: {
+      requiresAuth: false,
+    },
     children: [
       {
         path: 'clothing',
         name: 'Clothing',
         component: () => import('@/views/Clothing.vue'),
         meta: {
+          requiresAuth: true,
           name: "demo管理"
         },
       },
     ],
   },
   {
-    path: '',
+    path: '/',
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
@@ -68,13 +73,14 @@ const routes: Array<RouteRecordRaw> = [
         name: 'User',
         component: () => import('@/views/user/index.vue'),
         meta: {
+          requiresAuth: true,
           name: "用户管理"
         },
       },
     ],
   },
   {
-    path: '',
+    path: '/',
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
@@ -86,13 +92,14 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Style',
         component: () => import('@/views/style/index.vue'),
         meta: {
+          requiresAuth: true,
           name: "款式管理"
         },
       },
     ],
   },
   {
-    path: '',
+    path: '/',
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
@@ -104,13 +111,14 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Standard',
         component: () => import('@/views/standard/index.vue'),
         meta: {
+          requiresAuth: true,
           name: "标准上传"
         },
       },
     ],
   },
   {
-    path: '',
+    path: '/',
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
@@ -122,13 +130,14 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Cad',
         component: () => import('@/views/cad/index.vue'),
         meta: {
+          requiresAuth: true,
           name: "CAD图上传"
         },
       },
     ],
   },
   {
-    path: '',
+    path: '/',
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
@@ -140,13 +149,14 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Layer',
         component: () => import('@/views/layer/index.vue'),
         meta: {
+          requiresAuth: true,
           name: "图层解析"
         },
       },
     ],
   },
   {
-    path: '',
+    path: '/',
     name: '',
     component: DEFAULT_LAYOUT,
     meta: {
@@ -158,6 +168,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Create',
         component: () => import('@/views/create/index.vue'),
         meta: {
+          requiresAuth: true,
           name: "智能生成"
         },
       },
@@ -168,7 +179,7 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({ history: createWebHashHistory(), routes })
 
 router.beforeEach((to, from, next) => {
-  console.log(to.meta.requiresAuth, isAuthenticated())
+  console.log(to.meta, isAuthenticated())
   window.document.title = to.meta.title === undefined ? '后台' : to.meta.title as string
   console.log("to",to)
   if (to.meta.requiresAuth && !isAuthenticated()) { // 如果需要验证登录，并且没有登录，则跳转到登录页

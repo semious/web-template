@@ -8,7 +8,7 @@
                 <a-layout>
                     <a-layout-sider class="layout-sider" :width="menuWidth">
                         <div class="app-info"><img
-                            width="28" src="@/assets/images/logo.png"
+                            width="28" src="@/assets/images/logo_2.png"
                           /><span v-if="!collapsed">成衣制作</span></div>
                         <a-menu :default-open-keys="['0']" :default-selected-keys="['0_2']" show-collapse-button
                             breakpoint="xl" @collapse="onCollapse" :collapsed="collapsed">
@@ -124,7 +124,7 @@
 
 </script>
 <style lang="less" scoped>
-    @nav-size-height: 70px;
+    @nav-size-height: 75px;
     @layout-max-width: 1100px;
 
     .layout {
@@ -150,20 +150,24 @@
         transition: all 0.2s cubic-bezier(0.34, 0.69, 0.1, 1);
         box-shadow: none;
         .app-info {
-            padding: 24px 0;
+            // padding: 24px 0;
             display: flex;
             justify-content: center;
             align-items: center;
-            
+            // width: 144px;
+            height: 75px;
+            background: #3357DF;
+            border-radius: 0px 0px 0px 0px;
+            opacity: 1;
             span {
                 font-size: 16px;
                 font-weight: 500;
-                color: #1D2129;
+                color: #fff;
                 margin-left: 2px;
             }
         }
         :deep(.arco-menu) {
-            height:100%;
+            flex:1;
             .arco-menu-inner {
                 padding-top: 45px;
                 .arco-menu-icon {

@@ -2,7 +2,7 @@
   <a-layout class="container">
     <CodeSearch @searchKeyword="searchKeyword"></CodeSearch>
     <BasicInfo :styleCode="styleCode" @addUser="addUser" ref="basicInfoRef"></BasicInfo>
-    <a-space style="margin-top: 12px;">
+    <a-space style="margin-top: 12px;margin-left: 24px;">
       <div class="psb-box">
         <div class="desc">上传标准码psb文件（已上传3 待上传1）</div>
         <a-space class="upload-info">
@@ -205,7 +205,7 @@ const onUploadCadError = (fileItem: any) => {
 </script>
 <style lang="less" scoped>
 .container {
-  padding: 24px 0 0 46px;
+//   padding: 24px 0 0 46px;
 
   .psb-box {
     width: 524px;

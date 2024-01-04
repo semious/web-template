@@ -244,7 +244,7 @@ const downloadAll = (list: any) => {
 </script>
 <style lang="less" scoped>
 .container {
-  padding: 24px 0 0 46px;
+  padding: 24px 0 0 24px;
   .basic-info {
     width: 1065px;
     padding: 18px 0;

@@ -34,7 +34,7 @@
         </a-table>
       </div>
     </a-space>
-    <a-space style="margin-top: 20px;">
+    <a-space style="margin-top: 20px;margin-left: 24px;">
       <a-space>
         <a-button type="text" size="small"
           @click="checkAll">全选</a-button>
@@ -313,26 +313,13 @@ const viewLayer = ()=> {
     getLayerList({
         partionId: ""
     }).then((res)=> {
-        
+
     })
 }
 </script>
     <style lang="less" scoped>
 .container {
-  padding: 24px 0 0 46px;
-  .basic-info {
-    width: 1065px;
-    padding: 18px 0;
-    background: #ffffff;
-    margin-top: 30px;
-    align-items: center;
-    .title {
-      font-size: 16px;
-      font-weight: bolder;
-      color: #1d2129;
-      text-align: center;
-    }
-  }
+//   padding: 24px 0 0 46px;
   .psb-box {
     width: 1065px;
     height: 270px;
@@ -340,6 +327,7 @@ const viewLayer = ()=> {
     border-radius: 0px 0px 0px 0px;
     opacity: 1;
     padding: 24px;
+    margin-left: 24px;
     .desc {
       font-size: 14px;
       font-weight: 400;
@@ -374,6 +362,7 @@ const viewLayer = ()=> {
     margin-top: 10px;
     display: flex;
     flex-wrap: wrap;
+    margin-left: 24px;
     .img-item {
       width: 118px;
       display: flex;

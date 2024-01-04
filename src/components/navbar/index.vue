@@ -8,7 +8,7 @@
               :style="{ marginRight: '8px', cursor: 'pointer' }"
             >
               <img alt="avatar" :src="avatar" />
-              张三峰
+              
             </a-avatar>张三峰</a-space>
             <template #content>
               <a-doption>
@@ -96,7 +96,8 @@
       display: flex;
       justify-content: space-between;
       height: 100%;
-      background-color: var(--color-bg-2);
+      background-color: #3860F4;
+
       /* border-bottom: 1px solid var(--color-border); */
     }
   
@@ -123,7 +124,7 @@
       .user-name {
         font-size: 14px;
         font-weight: 400;
-        color: #1D2129;
+        color: #fff;
         cursor: pointer;
       }
 

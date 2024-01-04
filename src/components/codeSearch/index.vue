@@ -1,5 +1,5 @@
 <template>
-     <a-space>
+     <a-space class="search-box">
         <a-input class="search-input" v-model="styleCode" placeholder="请输入款式ID进行筛选" allow-clear>
         </a-input>
         <a-button type="primary" @click="searchKeyword">查询</a-button>
@@ -22,3 +22,16 @@ const searchKeyword = () => {
 }
 
 </script>
+<style lang="less" scoped>
+.search-box {
+    height: 65px;
+    background: #fff;
+    padding-left: 24px;
+    .search-input {
+        height: 32px;
+        background: #F7F8FA !important;
+        border-radius: 2px 2px 2px 2px;
+        opacity: 1;
+    }
+}
+</style>

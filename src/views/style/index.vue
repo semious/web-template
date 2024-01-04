@@ -53,7 +53,7 @@
 
     import { ref, onMounted, computed, reactive, watch, onUpdated, onUnmounted } from "vue";
     import { getStyleList,deleteStyle } from "@/api/style";
-    import CodeSearch from "@/components/codeSearch/index.vue";
+    import CodeSearch from "@/components/codeSearch/styleSearch.vue";
     import StyleAdd from "@/components/styleAdd/index.vue";
     
     const columns = [{
