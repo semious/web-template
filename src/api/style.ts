@@ -6,8 +6,8 @@ import { request } from '@/utils/request'
 export function getStyleList(params: any) {
     return request({
         url: '/clothes/style/list',
-        method: 'get',
-        params: params
+        method: 'post',
+        data: params
     })
 }
 

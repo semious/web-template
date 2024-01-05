@@ -57,7 +57,7 @@
     import StyleAdd from "@/components/styleAdd/index.vue";
     
     const columns = [{
-        title: '款式ID',
+        title: '款式编号',
         dataIndex: 'styleCode',
         width: 125
     },
@@ -68,7 +68,7 @@
     },
     {
         title: '客户',
-        dataIndex: 'custom',
+        dataIndex: 'customer',
         width: 100
     },
     {
@@ -151,13 +151,14 @@
 
     const closeDrawer = () => {
         visibleAdd.value = false;
+        getStyleListReq();
     }
    
     const queryParams = ref({
         styleCode: "",
-        timeFilter: "",
-        status: "",
-        page: 1
+        timeFilter: null,
+        status: null,
+        pageNo: 1
     });
 
     const getStyleListReq = () => {
