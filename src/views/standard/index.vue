@@ -77,6 +77,7 @@ import { uploadPsb } from "@/api/style";
 import CodeSearch from "@/components/codeSearch/index.vue";
 import StyleAdd from "@/components/styleAdd/index.vue";
 import BasicInfo from "@/components/basicInfo/index.vue";
+
 const psbColumns = [
   {
     title: "纸样号",

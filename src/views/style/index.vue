@@ -28,12 +28,22 @@
                 新增款式
             </a-button>
         </a-space>
-        <a-table style="margin-top: 24px;width: 1200px;" filter-icon-align-left :columns="columns" :data="data">
+        <a-table   style="margin-top: 24px;width: 1230px;" filter-icon-align-left :columns="columns" :data="data" :pagination="false">
+            <template #createTimeOptional="{ record }">
+                <div> {{formatDateInfo(record.createTime)}}</div>
+            </template>
+            <template #imgOptional="{ record }">
+                <a-image
+                    width="80"
+                    :src="record.effectImg"
+                />
+            </template>
             <template #optional="{ record }">
                 <a-button type="text" size="small" @click="deleteUser">删除</a-button>
                 <a-button type="text" size="small" @click="updateUser(1)">修改</a-button>
             </template>
         </a-table>
+        <a-pagination :total="total" show-total/>
         <a-modal v-model:visible="visible" @ok="handleOk" @cancel="handleCancel">
             <template #title>
                 是否禁用该用户
@@ -55,7 +65,10 @@
     import { getStyleList,deleteStyle } from "@/api/style";
     import CodeSearch from "@/components/codeSearch/styleSearch.vue";
     import StyleAdd from "@/components/styleAdd/index.vue";
-    
+    import { formatDate } from "@/utils/format";
+    const formatDateInfo = (dateTime:any) => {
+        return formatDate(dateTime)
+    };
     const columns = [{
         title: '款式编号',
         dataIndex: 'styleCode',
@@ -74,7 +87,8 @@
     {
         title: '新增时间',
         dataIndex: 'createTime',
-        width: 170,
+        slotName: 'createTimeOptional',
+        width: 170
     }, {
         title: '纸样师',
         dataIndex: 'paperUserName',
@@ -86,6 +100,7 @@
     }, {
         title: '效果图',
         dataIndex: 'effectImg',
+        slotName: 'imgOptional',
         width: 80
     }, {
         title: '状态',
@@ -102,9 +117,7 @@
         align: 'center'
     }]
     const tagStatus = ref("");
-    const data = [{
-       
-    }]
+    const data = ref([])
     const tagValue = ref("");
 
     const visible = ref(false);
@@ -135,7 +148,6 @@
     const handleDeleteCancel = () => {
         visibleDelete.value = false;
     }
-
     const visibleAdd = ref(false);
     const userTitle = ref("");
     const addUser = () => {
@@ -148,7 +160,6 @@
         visibleAdd.value = true;
         isModify.value = val;
     }
-
     const closeDrawer = () => {
         visibleAdd.value = false;
         getStyleListReq();
@@ -156,14 +167,19 @@
    
     const queryParams = ref({
         styleCode: "",
-        timeFilter: null,
-        status: null,
+        timeFilter: "",
+        status: "",
         pageNo: 1
     });
-
+    const total = ref(0);
     const getStyleListReq = () => {
-        getStyleList(queryParams.value).then((res) => {
+        getStyleList(queryParams.value).then((res:any) => {
             console.log("getStyleList",res)
+            if(res && res.data) {
+                total.value = res.data.total || 0;
+                data.value = res.data.records || [];
+            }
+            
         })
     }
     getStyleListReq();
