@@ -39,11 +39,11 @@
                 />
             </template>
             <template #optional="{ record }">
-                <a-button type="text" size="small" @click="deleteUser">删除</a-button>
-                <a-button type="text" size="small" @click="updateUser(1)">修改</a-button>
+                <a-button type="text" size="small" @click="deleteUser(record.id)">删除</a-button>
+                <a-button type="text" size="small" @click="updateUser(record.id)">修改</a-button>
             </template>
         </a-table>
-        <a-pagination :total="total" show-total/>
+        <a-pagination :total="total" show-total @change="pageChange"/>
         <a-modal v-model:visible="visible" @ok="handleOk" @cancel="handleCancel">
             <template #title>
                 是否禁用该用户
@@ -56,7 +56,7 @@
             </template>
             <div>是否删除该款式</div>
         </a-modal>
-        <StyleAdd :userTitle="userTitle" :visibleAdd="visibleAdd" @closeDrawer="closeDrawer" :isModify="isModify"></StyleAdd>
+        <StyleAdd :userTitle="userTitle" :visibleAdd="visibleAdd" @closeDrawer="closeDrawer" :isModify="isModify" ref="styleAddRef"></StyleAdd>
     </a-layout>
 </template>
 <script lang="ts" setup>
@@ -65,6 +65,8 @@
     import { getStyleList,deleteStyle } from "@/api/style";
     import CodeSearch from "@/components/codeSearch/styleSearch.vue";
     import StyleAdd from "@/components/styleAdd/index.vue";
+    
+    import { Message } from '@arco-design/web-vue';
     import { formatDate } from "@/utils/format";
     const formatDateInfo = (dateTime:any) => {
         return formatDate(dateTime)
@@ -121,6 +123,7 @@
     const tagValue = ref("");
 
     const visible = ref(false);
+    const deleteId= ref("");
 
     const disabledEnabled = () => {
         visible.value = true;
@@ -135,14 +138,23 @@
     }
 
     const visibleDelete = ref(false);
-    const deleteUser = () => {
+    const deleteUser = (id:any) => {
         visibleDelete.value = true;
+        deleteId.value = id;
     }
+    
     const handleDeleteOk = () => {
         visibleDelete.value = false;
-        let deleteId = "1";
-        deleteStyle(deleteId).then((res)=> {
-
+        deleteStyle(deleteId.value).then((res:any)=> {
+            if(res && res.retCode === 0) {
+                Message.info('删除款式成功');
+                deleteId.value = "";
+                getStyleListReq();
+            } else {
+                Message.info('删除款式失败，请稍后重试');
+            }
+        }).catch(()=> {
+            Message.info('删除款式失败，请稍后重试');
         })
     }
     const handleDeleteCancel = () => {
@@ -153,12 +165,17 @@
     const addUser = () => {
         userTitle.value = "新增款式";
         visibleAdd.value = true;
+        isModify.value = 0;
     }
     const isModify = ref(0);
+    const styleId = ref(0);
+    const styleAddRef = ref(null);
     const updateUser = (val:number) => {
         userTitle.value = "修改款式";
         visibleAdd.value = true;
-        isModify.value = val;
+        isModify.value = 1;
+        styleId.value = val;
+        styleAddRef.value.getStyleDetailReq(styleId.value)
     }
     const closeDrawer = () => {
         visibleAdd.value = false;
@@ -183,6 +200,12 @@
         })
     }
     getStyleListReq();
+
+    const pageChange = (val:number) => {
+        console.log("pageChange",val)
+        queryParams.value.pageNo = val;
+        getStyleListReq();
+    }
 
     const searchKeyword = (val:any) => {
         queryParams.value.styleCode = val;
@@ -244,6 +267,12 @@
                 border-radius: 2px 2px 2px 2px;
                 opacity: 1;
             }
+        }
+
+        .arco-pagination {
+            width: 1230px;
+            padding: 10px 0;
+            justify-content: flex-end;
         }
 
     }

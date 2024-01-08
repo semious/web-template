@@ -166,6 +166,7 @@
                 margin-left: 2px;
             }
         }
+       
         :deep(.arco-menu) {
             flex:1;
             .arco-menu-inner {
@@ -203,6 +204,10 @@
                 color: #165DFF;
             }
         }
+    }
+
+    .arco-layout {
+        flex: auto;
     }
 
     .layout-content {

@@ -1,14 +1,14 @@
 <template>
   <a-layout class="container">
     <CodeSearch @searchKeyword="searchKeyword"></CodeSearch>
-    <BasicInfo :styleCode="styleCode" @addUser="addUser" ref="basicInfoRef"></BasicInfo>
+    <BasicInfo :styleCode="styleCode" @addUser="addUser" ref="basicInfoRef" v-show="showDetail" @showDetailInfo="showDetailInfo"></BasicInfo>
 
-    <a-space style="margin-top: 12px;">
+    <a-space style="margin-top: 12px;" v-show="showDetail">
       <div class="psb-box">
         <div class="desc">提示：这里是放提示语句的</div>
 
         <a-space class="upload-info">
-          <div class="desc">上传其他码CAD文件（已上传12 待上传3）</div>
+          <div class="desc">上传其他码CAD文件（已上传{{uploadCount}} 待上传{{unUploadCount}}）</div>
           <a-upload :custom-request="customRequest"
             name="cad" :auto-upload="true"
             @success="onUploadCadSuccess"
@@ -93,7 +93,7 @@
       <div>删除该用户后需要重新添加账号才可以登录</div>
     </a-modal>
     <StyleAdd :userTitle="userTitle"
-      :visibleAdd="visibleAdd" @closeDrawer="closeDrawer" :isModify="isModify">
+      :visibleAdd="visibleAdd" @closeDrawer="closeDrawer" :isModify="isModify" ref="styleAddRef">
     </StyleAdd>
   </a-layout>
 </template>
@@ -112,6 +112,7 @@ import CodeSearch from "@/components/codeSearch/index.vue";
 import StyleAdd from "@/components/styleAdd/index.vue";
 import BasicInfo from "@/components/basicInfo/index.vue";
 import { uploadCad, modifyPartionRemark } from "@/api/style";
+// import { StyleDetailInfo } from "@/api/typing";
 
 const psbColumns = [
   {
@@ -158,21 +159,22 @@ const psbColumns = [
 ];
 const tagStatus = ref("");
 const psbData = [
-  {
-    patternNumber: 1,
-    XSName: "1_s_后半裙.psb",
-    MName: "1_s_后半裙.psb",
-    LName: "1_s_后半裙.psb",
-    XLName: "1_s_后半裙.psb",
-    XXLName: "1_s_后半裙.psb",
-    patternName: "后半裙",
-  },
 ];
 const tagValue = ref("");
 
 const visible = ref(false);
 const showInput = ref(false);
-
+const showDetail = ref(false);
+const styleDetail = ref();
+const uploadCount = ref(0);
+const unUploadCount = ref(0);
+const showDetailInfo = (val:any) => {
+  showDetail.value = true;
+  styleDetail.value = val;
+  if(styleDetail && styleDetail.value.partNum) {
+    unUploadCount.value = styleDetail.value.partNum;
+  }
+};
 const disabledEnabled = () => {
   visible.value = true;
 };
@@ -199,11 +201,16 @@ const handleDeleteCancel = () => {
 const visibleAdd = ref(false);
 const userTitle = ref("");
 const isModify = ref(0);
-const addUser = (val:number) => {
+const styleId = ref();
+const styleAddRef = ref(null);
+const addUser = (val: number) => {
   userTitle.value = "修改基本信息";
   visibleAdd.value = true;
-  isModify.value = val;
+  isModify.value = 1;
+  styleId.value = val;
+  styleAddRef.value.getStyleDetailReq(styleId.value);
 };
+
 const updateUser = () => {
   userTitle.value = "修改款式";
   visibleAdd.value = true;

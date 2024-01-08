@@ -36,7 +36,8 @@
             <a-option value="王五">王五</a-option>
           </a-select>
         </a-form-item>
-        <a-form-item field="effectImg" label="效果图" required>
+        <a-form-item field="effectImg" label="效果图" >
+          <a-image v-if="form.effectImgUrl" width="67" :src="form.effectImgUrl"/>
           <a-upload @change="onChange" name="effectImg"
             :auto-upload="false"
             @success="onUploadCadSuccess"
@@ -44,7 +45,7 @@
             :on-before-upload="(file) => { loading = true; return true; }"
             :limit="1">
             <template #upload-button>
-              <a-button type="primary">上传</a-button>
+              <a-button type="primary">上传图片</a-button>
             </template>
           </a-upload>
         </a-form-item>
@@ -96,8 +97,9 @@
         <a-space>
           <a-button
             @click="$refs.formRef.resetFields();handleAddCancel();">取消</a-button>
-          <a-button  type="primary"  html-type="submit">确定</a-button>
-          
+          <a-button type="primary"
+            html-type="submit">确定</a-button>
+
         </a-space>
       </a-form-item>
     </a-form>
@@ -113,8 +115,8 @@ import {
   onUpdated,
   onUnmounted,
 } from "vue";
-import { postStyleSave } from "@/api/style";
-import { Message } from '@arco-design/web-vue';
+import { postStyleSave,getStyleDetail } from "@/api/style";
+import { Message } from "@arco-design/web-vue";
 const props = defineProps(["userTitle", "visibleAdd", "isModify"]);
 console.log("props", props);
 const emit = defineEmits(["closeDrawer"]);
@@ -125,7 +127,8 @@ console.log("isModify", isModify);
 watch(props, () => {
   isModify.value = props.isModify;
 });
-const form = reactive({
+const form = ref({
+  id: "",
   styleCode: "",
   styleName: "",
   paperUserId: "",
@@ -136,6 +139,7 @@ const form = reactive({
   styleRemark: "",
   customer: "",
   effectImg: null,
+  effectImgUrl: null
 });
 
 const rules = {
@@ -151,12 +155,12 @@ const rules = {
       message: "纸样数必须填写",
     },
   ],
-  effectImg: [
-    {
-      required: true,
-      message: "效果图必须上传",
-    },
-  ],
+  // effectImg: [
+  //   {
+  //     required: true,
+  //     message: "效果图必须上传",
+  //   },
+  // ],
   sizes: [
     {
       required: true,
@@ -171,44 +175,83 @@ const rules = {
   ],
 };
 
+const getStyleDetailReq = (styleId:any) => {
+ getStyleDetail(styleId).then((res: any) => {
+   console.log("getStyleDetail", res);
+   if (res && res.data) {
+      form.value = res.data;
+      if(form.value.effectImg) {
+        form.value.effectImgUrl = form.value.effectImg;
+        form.value.effectImg = null;
+      }
+      // form.value.partNum = Number(form.value.partNum)
+   }
+ });
+};
+
+
 const handleSubmit = ({ values, errors }) => {
   console.log("values:", values, "\nerrors:", errors);
-  if(!errors) {
-    postStyleSaveReq()
+  if (!errors) {
+    postStyleSaveReq();
   }
+};
+
+const resetForm = () => {
+    form.value.id = "";
+    form.value.styleCode = "";
+    form.value.styleName = "";
+    form.value.paperUserId = "";
+    form.value.designerId = "";
+    form.value.sizes = [];
+    form.value.standardSize = "";
+    form.value.partNum = "";
+    form.value.styleRemark = "";
+    form.value.customer = "";
+    form.value.effectImg = null;
+    form.value.effectImgUrl = null;
 };
 
 const postStyleSaveReq = () => {
   console.log("form", form);
+
   let params = {
-    styleCode: Number(form.styleCode),
-    styleName: form.styleName,
-    paperUserId: form.paperUserId,
-    designerId: form.designerId,
-    sizes: form.sizes,
-    standardSize: form.standardSize,
-    partNum: Number(form.partNum),
-    styleRemark: form.styleRemark,
-    customer: form.customer,
-    effectImg: form.effectImg,
+    styleCode: Number(form.value.styleCode),
+    styleName: form.value.styleName,
+    paperUserId: form.value.paperUserId,
+    designerId: form.value.designerId,
+    sizes: form.value.sizes,
+    standardSize: form.value.standardSize,
+    partNum: Number(form.value.partNum),
+    styleRemark: form.value.styleRemark,
+    customer: form.value.customer,
+    effectImg: form.value.effectImg || "",
   };
-  postStyleSave(params).then((res:any) => {
-    console.log("postStyleSave", res);
-    if(res && res.retCode === 0) {
-      Message.info('添加款式成功');
-      handleAddCancel();
-    } else {
-      Message.info('添加款式失败，请稍后重试');
-    }
-  }).catch(()=> {
-    Message.info('添加款式失败，请稍后重试');
-  });
+  if(form.value.id) {
+    params["id"] = form.value.id;
+  }
+  postStyleSave(params)
+    .then((res: any) => {
+      console.log("postStyleSave", res);
+      if (res && res.retCode === 0) {
+        Message.info(form.value.id ? "修改款式信息成功" : "添加款式成功");
+        resetForm();
+        handleAddCancel();
+      } else {
+        Message.info(form.value.id ? "修改款式信息失败，请稍后重试" : "添加款式失败，请稍后重试");
+      }
+    })
+    .catch(() => {
+      Message.info(form.value.id ? "修改款式信息失败，请稍后重试" : "添加款式失败，请稍后重试");
+    });
 };
 const handleAddOk = () => {
   postStyleSaveReq();
+  resetForm();
   emit("closeDrawer");
 };
 const handleAddCancel = () => {
+  resetForm();
   emit("closeDrawer");
 };
 
@@ -216,7 +259,7 @@ const loading = ref(false);
 const customRequestUpload = (option: any) => {
   const { fileItem } = option;
   console.log("fileItem :>> ", fileItem);
-  form.effectImg = fileItem.file;
+  form.value.effectImg = fileItem.file;
   console.log("form", form);
 };
 const onUploadCadSuccess = (fileItem: any) => {
@@ -227,8 +270,12 @@ const onUploadCadError = (fileItem: any) => {
 };
 const onChange = (fileList: any) => {
   console.log("fileList", fileList);
-  form.effectImg = fileList[0].file;
+  form.value.effectImg = fileList[0].file;
 };
+
+defineExpose({
+   getStyleDetailReq,
+})
 </script>
 <style lang="less">
 .add-drawer {
@@ -271,14 +318,14 @@ const onChange = (fileList: any) => {
     height: 64px;
     border-radius: 0px 0px 0px 0px;
     opacity: 1;
-    border-top: 1px solid #E5E6EB;
+    border-top: 1px solid #e5e6eb;
     position: absolute;
     left: 0;
     right: 0;
     bottom: 0;
     display: flex;
     align-items: center;
-    
+
     &.arco-form-item {
       margin-bottom: 0;
     }
