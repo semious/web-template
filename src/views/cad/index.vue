@@ -1,7 +1,7 @@
 <template>
   <a-layout class="container">
     <CodeSearch @searchKeyword="searchKeyword"></CodeSearch>
-    <BasicInfo :styleCode="styleCode" @addUser="addUser" ref="basicInfoRef" v-show="showDetail" @showDetailInfo="showDetailInfo"></BasicInfo>
+    <BasicInfo :styleId="styleId" @addUser="addUser" ref="basicInfoRef" v-show="showDetail" @showDetailInfo="showDetailInfo"></BasicInfo>
 
     <a-space style="margin-top: 12px;" v-show="showDetail">
       <div class="psb-box">
@@ -13,7 +13,7 @@
             name="cad" :auto-upload="true"
             @success="onUploadCadSuccess"
             @error="onUploadCadError"
-            :on-before-upload="(file) => { loading = true; return true; }">
+            :on-before-upload="beforeUpload" :limit="1" ref="fileUploadRef" :file-list="fileList">
             <template #upload-button>
               <a-button type="primary">上传</a-button>
             </template>
@@ -111,7 +111,8 @@ import {
 import CodeSearch from "@/components/codeSearch/index.vue";
 import StyleAdd from "@/components/styleAdd/index.vue";
 import BasicInfo from "@/components/basicInfo/index.vue";
-import { uploadCad, modifyPartionRemark } from "@/api/style";
+import { uploadCad, modifyPartionRemark,getPartionListByStyleId } from "@/api/style";
+import { Message } from "@arco-design/web-vue";
 // import { StyleDetailInfo } from "@/api/typing";
 
 const psbColumns = [
@@ -161,19 +162,37 @@ const tagStatus = ref("");
 const psbData = [
 ];
 const tagValue = ref("");
-
 const visible = ref(false);
 const showInput = ref(false);
 const showDetail = ref(false);
 const styleDetail = ref();
 const uploadCount = ref(0);
 const unUploadCount = ref(0);
+const getPartionListBySizeReq = () => {
+  getPartionListByStyleId(
+    styleDetail.value.id
+  ).then((res:any) => {
+    psbData.value = res.data || [];
+    uploadCount.value = psbData.value.length;
+    if (styleDetail && styleDetail.value.partNum) {
+      let partNum = styleDetail.value.partNum;
+      unUploadCount.value = Number(partNum) - Number(uploadCount.value);
+    }
+    
+  }).catch(()=> {
+    uploadCount.value = 0;
+    if (styleDetail && styleDetail.value.partNum) {
+      let partNum = styleDetail.value.partNum;
+      unUploadCount.value = Number(partNum) - Number(uploadCount.value);
+    }
+    
+  });
+};
+
 const showDetailInfo = (val:any) => {
   showDetail.value = true;
   styleDetail.value = val;
-  if(styleDetail && styleDetail.value.partNum) {
-    unUploadCount.value = styleDetail.value.partNum;
-  }
+  getPartionListBySizeReq();
 };
 const disabledEnabled = () => {
   visible.value = true;
@@ -244,10 +263,9 @@ const inputBlur = () => {
 };
 
 const basicInfoRef = ref<any>();
-const styleCode = ref();
 const searchKeyword = (val: any) => {
-  styleCode.value = val;
-  basicInfoRef.value.getStyleDetailReq(styleCode.value)
+  styleId.value = val;
+  basicInfoRef.value.getStyleDetailReq(styleId.value)
 };
 
 const closeDrawer = () => {
@@ -256,13 +274,37 @@ const closeDrawer = () => {
 
 
 const loading = ref(false);
+const fileList = ref([])
+
+const fileUploadRef = ref();
+const beforeUpload = (fileItem) => {
+  console.log("file", fileItem);
+  let name = fileItem.name;
+  const preg =
+    /^\d{0,}[_]{1}(s|m|l|xl|xxl|xxxl|xs|xxs)[_]{1}[\u4e00-\u9fa5]{0,}\.(jpg|png|jpeg)/;
+  if (preg.test(name)) {
+    loading.value = true;
+    let item = {
+      name: fileItem.name
+    }
+    fileList.value.push(item);
+    console.log("fileList",fileList)
+    return true;
+  } else {
+    Message.info(
+      "文件命名不规则，规则为：1_" +
+        styleDetail.value.standardSize.toLowerCase() +
+        "_后半裙.jpg"
+    );
+    return false;
+  }
+};
 const customRequest = (option: any) => {
   const { fileItem } = option;
   console.log("fileItem :>> ", fileItem);
 
   let params = {
-    styleId: "",
-    size: "",
+    styleId: styleId.value,
     cad: fileItem.file,
   };
 
@@ -270,10 +312,21 @@ const customRequest = (option: any) => {
   uploadCad(params)
     .then((res: any) => {
       console.log("uploadPsb", res);
+      if (res && res.retCode === 0) {
+        Message.info("上传CAD文件成功");
+      } else {
+        
+        Message.info(res.retMsg || "上传CAD文件失败，请稍后重试");
+      }
+      fileList.value = [];
       loading.value = false;
+      getPartionListBySizeReq();
     })
     .catch(() => {
+      fileList.value = [];
       loading.value = false;
+      Message.info("上传CAD文件失败，请稍后重试");
+      getPartionListBySizeReq();
     });
 };
 const onUploadCadSuccess = (fileItem: any) => {
@@ -285,7 +338,7 @@ const onUploadCadError = (fileItem: any) => {
 </script>
   <style lang="less" scoped>
 .container {
-//   padding: 24px 0 0 46px;
+
   .psb-box {
     width: 1065px;
     height: 384px;
@@ -317,6 +370,9 @@ const onUploadCadError = (fileItem: any) => {
       }
       :deep(.arco-upload-wrapper) {
         font-size: 14px;
+      }
+      :deep(.arco-upload-list-item-uploading) {
+        display: none;
       }
     }
     :deep(.arco-input-wrapper) {

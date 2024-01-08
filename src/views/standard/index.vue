@@ -27,7 +27,7 @@
           <template #sizeOptional="{ record }">
             <div class="opration-item"
               @click="delSizeName(record)">
-              {{record.sizeName}}
+              {{record.remark}}
               <icon-delete />
             </div>
 
@@ -35,10 +35,10 @@
           <template #nameOptional="{ record }">
             <div v-if="!showInput" class="opration-item"
               @click="modifyName(record)">
-              {{record.patternName}}
+              {{record.remark}}
               <icon-edit />
             </div>
-            <a-input v-else ref="editInputRef"
+            <a-input v-else v-model="record.remark" ref="editInputRef"
               :style="{width:'100px'}" placeholder="输入纸样名称"
               allow-clear @blur="inputBlur"
               @press-enter="inputBlur" />
@@ -118,9 +118,19 @@ const getPartionListBySizeReq = () => {
     styleDetail.value.standardSize
   ).then((res:any) => {
     psbData.value = res.data || [];
+    uploadCount.value = psbData.value.length;
     if (styleDetail && styleDetail.value.partNum) {
-      unUploadCount.value = styleDetail.value.partNum;
+      let partNum = styleDetail.value.partNum;
+      unUploadCount.value = Number(partNum) - Number(uploadCount.value);
     }
+    
+  }).catch(()=> {
+    uploadCount.value = 0;
+    if (styleDetail && styleDetail.value.partNum) {
+      let partNum = styleDetail.value.partNum;
+      unUploadCount.value = Number(partNum) - Number(uploadCount.value);
+    }
+    
   });
 };
 
@@ -202,14 +212,34 @@ const delSizeName = (record) => {
   partionId.value = record.id;
 };
 const editInputRef = ref(null);
+const recordInput = ref();
 const modifyName = (record) => {
   showInput.value = true;
+  recordInput.value = record;
   nextTick(() => {
     editInputRef.value.focus();
   });
 };
 const inputBlur = () => {
   showInput.value = false;
+  if(!recordInput.remark) {
+    modifyPartionRemark({
+      id: recordInput.value.id,
+      remark: recordInput.value.remark
+    }).then((res) => {
+      if (res && res.retCode === 0) {
+        Message.info("修改纸样名称成功");
+      } else {
+        Message.info(res.retMsg || "修改纸样名称失败，请稍后重试");
+      }
+      getPartionListBySizeReq();
+    }).catch(() => {
+      Message.info("修改纸样名称失败，请稍后重试");
+      getPartionListBySizeReq();
+    })
+  } else {
+    recordInput.value = null;
+  }
 };
 
 const basicInfoRef = ref<any>();
@@ -223,26 +253,25 @@ const closeDrawer = () => {
   visibleAdd.value = false;
 };
 
-const preg =
-  /^\d{0,}[_]{1}[s|m|l|xl|xxl|xxxl|xs|xxs]{1}[_]{1}[\u4e00-\u9fa5]{0,}\.psb/;
-let str = "1_s1_测试.psb";
-console.log("preg.test(str)", preg.test(str));
 const loading = ref(false);
 const beforeUpload = (fileItem) => {
   console.log("file", fileItem);
   let name = fileItem.name;
   const preg =
-    /^\d{0,}[_]{1}[s|m|l|xl|xxl|xxxl|xs|xxs]{1}[_]{1}[\u4e00-\u9fa5]{0,}\.psb/;
+    /^\d{0,}[_]{1}(s|m|l|xl|xxl|xxxl|xs|xxs)[_]{1}[\u4e00-\u9fa5]{0,}\.psb/;
   if (preg.test(name)) {
     loading.value = true;
-    fileList.value.push(fileItem);
+    let item = {
+      name: fileItem.name
+    }
+    fileList.value.push(item);
     console.log("fileUploadRef",fileUploadRef)
     return true;
   } else {
     Message.info(
       "文件命名不规则，规则为：1_" +
         styleDetail.value.standardSize.toLowerCase() +
-        "_后半裙"
+        "_后半裙.psb"
     );
     return false;
   }
@@ -261,17 +290,19 @@ const customRequest = (option: any) => {
     .then((res: any) => {
       console.log("uploadPsb", res);
       if (res && res.retCode === 0) {
-        fileList.value = "";
+       
         Message.info("上传标准码psb文件成功");
       } else {
         Message.info(res.retMsg || "上传标准码psb文件失败，请稍后重试");
       }
       loading.value = false;
+      fileList.value = [];
       getPartionListBySizeReq();
     })
     .catch(() => {
       Message.info("上传标准码psb文件失败，请稍后重试");
       loading.value = false;
+      fileList.value = [];
       getPartionListBySizeReq();
     });
 };

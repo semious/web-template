@@ -5,7 +5,7 @@
     </a-col>
     <a-col :span="18">
       <a-descriptions :column="4" table-layout="fixed">
-        <a-descriptions-item label="款式ID:">
+        <a-descriptions-item label="款式编号:">
           {{styleDetail && styleDetail.styleCode}}
         </a-descriptions-item>
         <a-descriptions-item label="标准码:">

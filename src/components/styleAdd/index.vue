@@ -142,6 +142,8 @@ const form = ref({
   effectImgUrl: null
 });
 
+
+
 const rules = {
   styleCode: [
     {
@@ -184,7 +186,7 @@ const getStyleDetailReq = (styleId:any) => {
         form.value.effectImgUrl = form.value.effectImg;
         form.value.effectImg = null;
       }
-      // form.value.partNum = Number(form.value.partNum)
+      form.value.partNum = form.value.partNum + ""
    }
  });
 };

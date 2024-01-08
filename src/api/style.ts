@@ -116,3 +116,35 @@ export function getPartionListBySize(styleId:any,size: any) {
     })
 }
 
+/*
+款式的所有尺码的分片列表
+*/
+export function getPartionListByStyleId(styleId:any) {
+    return request({
+        url: '/clothes/partion/list/' + styleId,
+        method: 'get'
+    })
+}
+
+
+/*
+查看层图
+*/
+export function getLayerByPartionId(partionId:any) {
+    return request({
+        url: '/clothes/layer/list/' + partionId,
+        method: 'get'
+    })
+}
+
+
+/*
+解析层图
+*/
+export function partionSplit(params: any) {
+    return request({
+        url: '/clothes/partion/split',
+        method: 'post',
+        data: params
+    })
+}
