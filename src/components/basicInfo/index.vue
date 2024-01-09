@@ -39,7 +39,7 @@
     </a-col>
     <a-col :span="3">
       <a-button type="dashed" @click="addUser">
-        修改基本样式
+        修改基本信息
       </a-button>
     </a-col>
   </a-row>
@@ -58,7 +58,6 @@ const formatDateInfo = (dateTime: any) => {
   
 };
 const props = defineProps(["styleCode"]);
-console.log("props", props);
 const emit = defineEmits(["addUser", "showDetailInfo"]);
 const styleDetail = ref();
 

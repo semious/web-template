@@ -118,12 +118,10 @@ import {
 import { postStyleSave,getStyleDetail } from "@/api/style";
 import { Message } from "@arco-design/web-vue";
 const props = defineProps(["userTitle", "visibleAdd", "isModify"]);
-console.log("props", props);
 const emit = defineEmits(["closeDrawer"]);
 const id = ref();
 const isModify = ref(0);
 isModify.value = props.isModify;
-console.log("isModify", isModify);
 watch(props, () => {
   isModify.value = props.isModify;
 });

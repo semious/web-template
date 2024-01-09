@@ -14,7 +14,8 @@
             name="psd" :auto-upload="true"
             @success="onUploadCadSuccess"
             @error="onUploadCadError"
-            :on-before-upload="beforeUpload" :limit="1" ref="fileUploadRef">
+            :on-before-upload="beforeUpload"
+            ref="fileUploadRef">
             <template #upload-button>
               <a-button type="primary">上传</a-button>
             </template>
@@ -27,7 +28,7 @@
           <template #sizeOptional="{ record }">
             <div class="opration-item"
               @click="delSizeName(record)">
-              {{record.remark}}
+              {{subImgName(record.cadUrl)}}
               <icon-delete />
             </div>
 
@@ -38,10 +39,10 @@
               {{record.remark}}
               <icon-edit />
             </div>
-            <a-input v-else v-model="record.remark" ref="editInputRef"
-              :style="{width:'100px'}" placeholder="输入纸样名称"
-              allow-clear @blur="inputBlur"
-              @press-enter="inputBlur" />
+            <a-input v-else v-model="record.remark"
+              ref="editInputRef" :style="{width:'100px'}"
+              placeholder="输入纸样名称" allow-clear
+              @blur="inputBlur" @press-enter="inputBlur" />
           </template>
         </a-table>
       </div>
@@ -53,13 +54,6 @@
         是否删除该纸样
       </template>
       <div>删除该纸样</div>
-    </a-modal>
-    <a-modal v-model:visible="visibleDelete"
-      @ok="handleDeleteOk" @cancel="handleDeleteCancel">
-      <template #title>
-        是否删除该用户
-      </template>
-      <div>删除该用户后需要重新添加账号才可以登录</div>
     </a-modal>
     <StyleAdd :userTitle="userTitle"
       :visibleAdd="visibleAdd" @closeDrawer="closeDrawer"
@@ -78,11 +72,18 @@ import {
   onUnmounted,
   nextTick,
 } from "vue";
-import { uploadPsb, getPartionListBySize,deletePartion, modifyPartionRemark } from "@/api/style";
+import {
+  uploadPsb,
+  getPartionListBySize,
+  deletePartion,
+  modifyPartionRemark,
+} from "@/api/style";
 import CodeSearch from "@/components/codeSearch/index.vue";
 import StyleAdd from "@/components/styleAdd/index.vue";
 import BasicInfo from "@/components/basicInfo/index.vue";
 import { Message } from "@arco-design/web-vue";
+import { subImgName } from "@/utils/common";
+import { API_BASE_URL } from "@/api/constants";
 const showDetail = ref(false);
 const styleDetail = ref();
 const uploadCount = ref(0);
@@ -110,28 +111,25 @@ psbColumns.value = [
 
 const fileList = ref([]);
 const defaultFileList = ref();
-const fileUploadRef = ref()
+const fileUploadRef = ref();
 const psbData = ref([]);
 const getPartionListBySizeReq = () => {
-  getPartionListBySize(
-    styleDetail.value.id,
-    styleDetail.value.standardSize
-  ).then((res:any) => {
-    psbData.value = res.data || [];
-    uploadCount.value = psbData.value.length;
-    if (styleDetail && styleDetail.value.partNum) {
-      let partNum = styleDetail.value.partNum;
-      unUploadCount.value = Number(partNum) - Number(uploadCount.value);
-    }
-    
-  }).catch(()=> {
-    uploadCount.value = 0;
-    if (styleDetail && styleDetail.value.partNum) {
-      let partNum = styleDetail.value.partNum;
-      unUploadCount.value = Number(partNum) - Number(uploadCount.value);
-    }
-    
-  });
+  getPartionListBySize(styleDetail.value.id, styleDetail.value.standardSize)
+    .then((res: any) => {
+      psbData.value = res.data || [];
+      uploadCount.value = psbData.value.length;
+      if (styleDetail && styleDetail.value.partNum) {
+        let partNum = styleDetail.value.partNum;
+        unUploadCount.value = Number(partNum) - Number(uploadCount.value);
+      }
+    })
+    .catch(() => {
+      uploadCount.value = 0;
+      if (styleDetail && styleDetail.value.partNum) {
+        let partNum = styleDetail.value.partNum;
+        unUploadCount.value = Number(partNum) - Number(uploadCount.value);
+      }
+    });
 };
 
 const showDetailInfo = (val: any) => {
@@ -141,34 +139,28 @@ const showDetailInfo = (val: any) => {
   getPartionListBySizeReq();
 };
 
-const tagStatus = ref("");
-
-const tagValue = ref("");
-
 const visible = ref(false);
 const showInput = ref(false);
-
-const disabledEnabled = () => {
-  visible.value = true;
-};
-
+const partionId = ref();
 const handleOk = () => {
   visible.value = false;
+  deletePartion(partionId.value)
+    .then((res) => {
+      if (res && res.retCode === 0) {
+        Message.info("删除纸样成功");
+      } else {
+        Message.info(res.retMsg || "删除纸样失败，请稍后重试");
+      }
+      getPartionListBySizeReq();
+    })
+    .catch(() => {
+      Message.info("删除纸样失败，请稍后重试");
+      getPartionListBySizeReq();
+    });
 };
 
 const handleCancel = () => {
   visible.value = false;
-};
-
-const visibleDelete = ref(false);
-const deleteUser = () => {
-  visibleDelete.value = true;
-};
-const handleDeleteOk = () => {
-  visibleDelete.value = false;
-};
-const handleDeleteCancel = () => {
-  visibleDelete.value = false;
 };
 
 const visibleAdd = ref(false);
@@ -184,28 +176,6 @@ const addUser = (val: number) => {
   styleAddRef.value.getStyleDetailReq(styleId.value);
 };
 
-const updateUser = () => {
-  userTitle.value = "修改款式";
-  visibleAdd.value = true;
-};
-const partionId = ref();
-const handleAddOk = () => {
-  visibleAdd.value = false;
-  deletePartion(partionId).then((res) => {
-      if (res && res.retCode === 0) {
-        Message.info("删除分片成功");
-      } else {
-        Message.info(res.retMsg || "删除分片失败，请稍后重试");
-      }
-      getPartionListBySizeReq();
-  }).catch(()=> {
-    Message.info("删除分片失败，请稍后重试");
-    getPartionListBySizeReq();
-  })
-};
-const handleAddCancel = () => {
-  visibleAdd.value = false;
-};
 const delSizeName = (record) => {
   console.log("record", record);
   visible.value = true;
@@ -222,28 +192,30 @@ const modifyName = (record) => {
 };
 const inputBlur = () => {
   showInput.value = false;
-  if(!recordInput.remark) {
+  if (!recordInput.remark) {
     modifyPartionRemark({
-      id: recordInput.value.id,
-      remark: recordInput.value.remark
-    }).then((res) => {
-      if (res && res.retCode === 0) {
-        Message.info("修改纸样名称成功");
-      } else {
-        Message.info(res.retMsg || "修改纸样名称失败，请稍后重试");
-      }
-      getPartionListBySizeReq();
-    }).catch(() => {
-      Message.info("修改纸样名称失败，请稍后重试");
-      getPartionListBySizeReq();
+      styleId: styleId.value,
+      remark: recordInput.value.remark,
+      partionNo: recordInput.value.partionNo,
     })
+      .then((res) => {
+        if (res && res.retCode === 0) {
+          Message.info("修改纸样名称成功");
+        } else {
+          Message.info(res.retMsg || "修改纸样名称失败，请稍后重试");
+        }
+        getPartionListBySizeReq();
+      })
+      .catch(() => {
+        Message.info("修改纸样名称失败，请稍后重试");
+        getPartionListBySizeReq();
+      });
   } else {
     recordInput.value = null;
   }
 };
 
 const basicInfoRef = ref<any>();
-
 const searchKeyword = (val: any) => {
   styleId.value = val;
   basicInfoRef.value.getStyleDetailReq(styleId.value);
@@ -262,10 +234,10 @@ const beforeUpload = (fileItem) => {
   if (preg.test(name)) {
     loading.value = true;
     let item = {
-      name: fileItem.name
-    }
+      name: fileItem.name,
+    };
     fileList.value.push(item);
-    console.log("fileUploadRef",fileUploadRef)
+    console.log("fileUploadRef", fileUploadRef);
     return true;
   } else {
     Message.info(
@@ -277,8 +249,8 @@ const beforeUpload = (fileItem) => {
   }
 };
 const customRequest = (option: any) => {
-  const { fileItem } = option;
-  console.log("fileItem :>> ", fileItem);
+  const { onProgress, onError, onSuccess, fileItem, name } = option;
+  console.log("fileItem :>> ", fileItem, "name", name);
 
   let params = {
     styleId: styleId.value,
@@ -286,25 +258,76 @@ const customRequest = (option: any) => {
   };
 
   console.log("params", params);
-  uploadPsb(params)
-    .then((res: any) => {
-      console.log("uploadPsb", res);
-      if (res && res.retCode === 0) {
-       
-        Message.info("上传标准码psb文件成功");
-      } else {
-        Message.info(res.retMsg || "上传标准码psb文件失败，请稍后重试");
+  // uploadPsb(params)
+  //   .then((res: any) => {
+  //     console.log("uploadPsb", res);
+  //     if (res && res.retCode === 0) {
+
+  //       Message.info("上传标准码psb文件成功");
+  //     } else {
+  //       Message.info(res.retMsg || "上传标准码psb文件失败，请稍后重试");
+  //     }
+  //     loading.value = false;
+  //     fileList.value = [];
+  //     getPartionListBySizeReq();
+  //   })
+  //   .catch(() => {
+  //     Message.info("上传标准码psb文件失败，请稍后重试");
+  //     loading.value = false;
+  //     fileList.value = [];
+  //     getPartionListBySizeReq();
+  //   });
+
+  const xhr = new XMLHttpRequest();
+  if (xhr.upload) {
+    xhr.upload.onprogress = function (event) {
+      let percent;
+      if (event.total > 0) {
+        // 0 ~ 1
+        percent = event.loaded / event.total;
       }
-      loading.value = false;
-      fileList.value = [];
+      onProgress(percent, event);
+    };
+  }
+  xhr.onerror = function error(e) {
+    onError("上传失败");
+    getPartionListBySizeReq();
+  };
+  xhr.onload = function onload() {
+    if (xhr.status < 200 || xhr.status >= 300) {
       getPartionListBySizeReq();
-    })
-    .catch(() => {
-      Message.info("上传标准码psb文件失败，请稍后重试");
-      loading.value = false;
-      fileList.value = [];
+      return onError("上传失败");
+      
+    }
+    if (xhr.readyState == 4 && xhr.status == 200) {
+      console.log("xhr", xhr, xhr.responseText);
+      let responseText = JSON.parse(xhr.responseText);
+      if (responseText && responseText.retCode === 0) {
+        Message.info("上传标准码psb文件成功");
+        onSuccess("上传成功");
+      } else {
+        Message.info(
+          responseText.retMsg || "上传标准码psb文件失败，请稍后重试"
+        );
+        onError("上传失败");
+      }
       getPartionListBySizeReq();
-    });
+    } else {
+      getPartionListBySizeReq();
+    }
+  };
+
+  const formData = new FormData();
+  formData.append("styleId", styleId.value);
+  formData.append(name || "psd", fileItem.file);
+  xhr.open("post", API_BASE_URL + "/clothes/upload/psd", true);
+  xhr.send(formData);
+
+  return {
+    abort() {
+      xhr.abort();
+    },
+  };
 };
 const onUploadCadSuccess = (fileItem: any) => {
   loading.value = false;

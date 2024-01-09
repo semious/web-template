@@ -105,7 +105,6 @@
 
     console.log("route",route,"currentIdx",currentIdx.value)
     const menuWidth = computed(() => {
-        console.log("collapsed",collapsed)
         return collapsed.value ? 48 : 144;
     });
     const paddingStyle = computed(() => {
@@ -114,7 +113,6 @@
         return { ...paddingLeft, ...paddingTop };
     });
     const onCollapse = (val, type) => {
-        console.log("val", val)
         collapsed.value = val;
     }
 

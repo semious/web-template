@@ -141,10 +141,9 @@ export function getLayerByPartionId(partionId:any) {
 /*
 解析层图
 */
-export function partionSplit(params: any) {
+export function partionSplit(id: any) {
     return request({
-        url: '/clothes/partion/split',
-        method: 'post',
-        data: params
+        url: '/clothes/opt/split/' + id,
+        method: 'post'
     })
 }

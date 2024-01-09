@@ -179,7 +179,6 @@ const routes: Array<RouteRecordRaw> = [
 const router = createRouter({ history: createWebHashHistory(), routes })
 
 router.beforeEach((to, from, next) => {
-  console.log(to.meta, isAuthenticated())
   window.document.title = to.meta.title === undefined ? '后台' : to.meta.title as string
   console.log("to",to)
   if (to.meta.requiresAuth && !isAuthenticated()) { // 如果需要验证登录，并且没有登录，则跳转到登录页

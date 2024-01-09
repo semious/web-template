@@ -2,7 +2,6 @@ import axios from 'axios'
 import store from '@/store'
 import { API_BASE_URL } from '@/api/constants';
 
-console.log("API_BASE_URL",API_BASE_URL)
 // create an axios instance
 const axios_request = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL, // url = base url + request url
@@ -29,8 +28,8 @@ axios_request.interceptors.request.use(
     }
     // console.log('token :>> ', token);
     config.headers['token'] = token;
-    config.data && console.log('post :>> ', config.data);
-    config.params && console.log('query :>> ', config.params);
+    // config.data && console.log('post :>> ', config.data);
+    // config.params && console.log('query :>> ', config.params);
     return config
   },
   error => {
@@ -62,7 +61,7 @@ export function request(data: any) {
     if (data.url && data.url.indexOf('http') === -1) {
       data.url = API_BASE_URL + data.url;
     }
-    console.log('data :>> ', data);
+    // console.log('data :>> ', data);
     resolve(axios_request.request(data));
   })
 }
