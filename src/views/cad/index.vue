@@ -142,12 +142,9 @@ const getPartionListBySizeReq = () => {
         if (classifyTemp && classifyTemp.length > 0) {
           console.log("classifyTemp", classifyTemp);
           let psbDataTemp = {};
-          console.log("psbDataTemp")
           for (let o = 0, p = classifyTemp.length; o < p; o++) {
             let tempItem = classifyTemp[o];
             console.log("tempItem", tempItem);
-            let indexOf = styleDetail.value.sizes.indexOf(tempItem.size)
-            console.log("isExist",indexOf)
             
             if (styleDetail.value.sizes.indexOf(tempItem.size) >= 0) {
               if (o == 0) {
