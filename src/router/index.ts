@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
+import Hello from '../views/Hello.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -20,6 +21,14 @@ const routes: Array<RouteRecordRaw> = [
     meta: {
       requiresAuth: true,
       title: '后台 - 首页'
+    },
+  },
+  {
+    path: '/hello',
+    name: 'Hello',
+    component: Hello,
+    meta: {
+      title: 'Hello'
     },
   },
 ]

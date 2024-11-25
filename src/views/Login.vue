@@ -11,7 +11,7 @@
     <div class="panels-container">
       <div class="panel left-panel">
         <div class="content">
-          <h3>制衣后台</h3>
+          <h3>XX 后台</h3>
           <p>后台</p>
           <!-- <button @click="signUpMode = !signUpMode" class="btn transparent">
             注册
@@ -69,10 +69,10 @@ export default {
 
 .signin-signup {
   position: relative;
-  top: 90%;
-  left: 75%;
+  top: 60%;
+  left: 63%;
   transform: translate(-50%, -50%);
-  width: 44%;
+  width: 500px;
   transition: 1s 0.7s ease-in-out;
   display: grid;
   z-index: 5;
